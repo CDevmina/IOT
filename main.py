@@ -1,5 +1,4 @@
-import cv2
-import numpy as np
+import cv2 as cv2
 from ultralytics import YOLO
 from sort.sort import *
 from util import get_car, read_license_plate
@@ -13,7 +12,7 @@ license_plate_detector = YOLO('./models/license_plate_detector.pt')
 vehicles = [2, 3, 5, 7]
 
 # You can change the path to an image or a video file
-input_path = 'testdata/9.jpg'  # Change this to the path of your image or video file
+input_path = 'testdata/sample.mp4'  # Change this to the path of your image or video file
 
 # Check if the input is an image or a video
 is_video = input_path.endswith('.mp4') or input_path.endswith('.avi') or input_path.endswith('.mov')
