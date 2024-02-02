@@ -1,84 +1,81 @@
-import cv2 as cv2
 from ultralytics import YOLO
-from sort.sort import *
-from util import get_car, read_license_plate
+import cv2
+from util import read_license_plate
+import os
 
-mot_tracker = Sort()
-
-# Load models
+# load models
 coco_model = YOLO('yolov8n.pt')
-license_plate_detector = YOLO('./models/license_plate_detector.pt')
+license_plate_detector = YOLO('models/license_plate_detector.pt')
 
-vehicles = [2, 3, 5, 7]
+vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 
-# You can change the path to an image or a video file
-input_path = 'testdata/sample.mp4'  # Change this to the path of your image or video file
+def process_image(image_path):
+    frame = cv2.imread(image_path)
+    process_frame(frame)
+    cv2.imshow("Image", frame)
+    cv2.waitKey(0)
 
-# Check if the input is an image or a video
-is_video = input_path.endswith('.mp4') or input_path.endswith('.avi') or input_path.endswith('.mov')
-cap = cv2.VideoCapture(input_path) if is_video else None
+def process_video(video_path):
+    cap = cv2.VideoCapture(video_path)
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            process_frame(frame)
+            cv2.imshow("Video", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
-while True:
-    # Read frames from the input (image or video)
-    ret, frame = cap.read() if is_video else (True, cv2.imread(input_path))
-
-    if not ret:
-        break
-
-    # Detect vehicles
+def process_frame(frame):
     detections = coco_model(frame)[0]
-    detections_ = []
     for detection in detections.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = detection
-        # Filter vehicles based on class_id
-        if int(class_id) in vehicles:
-            detections_.append([x1, y1, x2, y2, score, int(class_id)])
+        if int(class_id) in vehicles.keys():
 
-    # Track vehicles
-    track_ids = mot_tracker.update(np.asarray(detections_))
+            #vehicle bounding box
+            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+            vehicle_type = vehicles.get(int(class_id), 'unknown')
+            cv2.putText(frame, f"Vehicle Type: {vehicle_type}", (int(x1), int(y1) - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-    # Detect license plates
-    license_plates = license_plate_detector(frame)[0]
-    for license_plate in license_plates.boxes.data.tolist():
-        x1, y1, x2, y2, score, class_id = license_plate
+            license_plates = license_plate_detector(frame)[0]
+            print(f"Detected {len(license_plates.boxes.data.tolist())} license plates.")
 
-        # Assign license plate to car
-        xcar1, ycar1, xcar2, ycar2, car_id = get_car(license_plate, track_ids)
+            for license_plate in license_plates.boxes.data.tolist():
+                x1, y1, x2, y2, score, class_id = license_plate
+                license_plate_crop = frame[int(y1):int(y2), int(x1): int(x2), :]
+                license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
+                _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255,
+                                                             cv2.THRESH_BINARY_INV)
+                license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_thresh)
 
-        if car_id != -1:
-            # Draw bounding boxes on the frame for vehicles
-            cv2.rectangle(frame, (int(xcar1), int(ycar1)), (int(xcar2), int(ycar2)), (0, 255, 0), 2)
+                #Plate not detected
+                if license_plate_text is None:
+                    license_plate_text = ''
+                    license_plate_text_score = 0
 
-            # Draw bounding boxes on the frame for license plates
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 2)
+                #license plate text and confidence score
+                print(f"License Plate: {license_plate_text}, Confidence: {score}")
 
-            # Crop license plate
-            license_plate_crop = frame[int(y1):int(y2), int(x1): int(x2), :]
+                cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+                cv2.putText(frame, f"License Plate: {license_plate_text}", (int(x1), int(y1) - 50),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-            # Process license plate
-            license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
-            _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255, cv2.THRESH_BINARY_INV)
+                licenseplate_score = round(score * 100, 2)
+                cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-            # Read license plate number
-            license_plate_text, _ = read_license_plate(license_plate_crop_thresh)
+# load file
+input_file = 'testdata/3.jpg'  # change this to your input file
 
-            if license_plate_text is not None:
-                # Display license string above the box with larger font and thicker text
-                text_position = (int((x1 + x2) / 2), int(y1) - 10)
-                cv2.putText(frame, f'License Plate: {license_plate_text} - Vehicle Type: {class_id}',
-                            text_position, cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 3)  # Increased size and thickness
+# get file extension
+_, file_extension = os.path.splitext(input_file)
 
-    # Display the frame
-    frame = cv2.resize(frame, (1280, 720))
-    cv2.imshow('Frame', frame)
-
-    # Break the loop if 'q' key is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the video capture
-if is_video:
-    cap.release()
-
-# Close all OpenCV windows
-cv2.destroyAllWindows()
+# check if the file is an image or a video
+if file_extension in ['.jpg', '.png', '.jpeg']:
+    process_image(input_file)
+elif file_extension in ['.mp4', '.avi']:
+    process_video(input_file)
