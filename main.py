@@ -1,81 +1,79 @@
-from ultralytics import YOLO
+import subprocess
+import time
 import cv2
+from ultralytics import YOLO
 from util import read_license_plate
-import os
 
-# load models
+# Load YOLO models
 coco_model = YOLO('yolov8n.pt')
 license_plate_detector = YOLO('models/license_plate_detector.pt')
 
 vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 
-def process_image(image_path):
+def process_frame(image_path):
+    # Process image
+    process_image(image_path)
+
+def process_image(image_path, scale_percent=50):
+    # Load image
     frame = cv2.imread(image_path)
-    process_frame(frame)
-    cv2.imshow("Image", frame)
-    cv2.waitKey(0)
 
-def process_video(video_path):
-    cap = cv2.VideoCapture(video_path)
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if ret:
-            process_frame(frame)
-            cv2.imshow("Video", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        else:
-            break
-    cap.release()
-    cv2.destroyAllWindows()
+    # Resize frame
+    width = int(frame.shape[1] * scale_percent / 100)
+    height = int(frame.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    resized_frame = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
 
-def process_frame(frame):
-    detections = coco_model(frame)[0]
+    # Process resized frame
+    detections = coco_model(resized_frame)[0]
     for detection in detections.boxes.data.tolist():
         x1, y1, x2, y2, score, class_id = detection
         if int(class_id) in vehicles.keys():
-
-            #vehicle bounding box
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+            # Vehicle bounding box
+            cv2.rectangle(resized_frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             vehicle_type = vehicles.get(int(class_id), 'unknown')
-            cv2.putText(frame, f"Vehicle Type: {vehicle_type}", (int(x1), int(y1) - 10),
+            cv2.putText(resized_frame, f"Vehicle Type: {vehicle_type}", (int(x1), int(y1) - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-            license_plates = license_plate_detector(frame)[0]
+            # License plate detection
+            license_plates = license_plate_detector(resized_frame)[0]
             print(f"Detected {len(license_plates.boxes.data.tolist())} license plates.")
 
             for license_plate in license_plates.boxes.data.tolist():
                 x1, y1, x2, y2, score, class_id = license_plate
-                license_plate_crop = frame[int(y1):int(y2), int(x1): int(x2), :]
+                license_plate_crop = resized_frame[int(y1):int(y2), int(x1): int(x2), :]
                 license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
                 _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255,
                                                              cv2.THRESH_BINARY_INV)
                 license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_thresh)
 
-                #Plate not detected
+                # Plate not detected
                 if license_plate_text is None:
                     license_plate_text = ''
                     license_plate_text_score = 0
 
-                #license plate text and confidence score
+                # Print license plate text and confidence score
                 print(f"License Plate: {license_plate_text}, Confidence: {score}")
 
-                cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-                cv2.putText(frame, f"License Plate: {license_plate_text}", (int(x1), int(y1) - 50),
+                # Draw bounding box and text on license plate
+                cv2.rectangle(resized_frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+                cv2.putText(resized_frame, f"License Plate: {license_plate_text}", (int(x1), int(y1) - 50),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
                 licenseplate_score = round(score * 100, 2)
-                cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
+                cv2.putText(resized_frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-# load file
-input_file = 'testdata/3.jpg'  # change this to your input file
+    # Display processed image
+    cv2.imshow("Image", resized_frame)
+    cv2.waitKey(0)
 
-# get file extension
-_, file_extension = os.path.splitext(input_file)
+def capture_image():
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    image_filename = f"captured_image_{timestamp}.jpg"
+    subprocess.run(["libcamera-still", "-o", image_filename])
+    print(f"Image captured: {image_filename}")
+    process_frame(image_filename)
 
-# check if the file is an image or a video
-if file_extension in ['.jpg', '.png', '.jpeg']:
-    process_image(input_file)
-elif file_extension in ['.mp4', '.avi']:
-    process_video(input_file)
+# Test camera functionality
+capture_image()
