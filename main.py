@@ -1,6 +1,7 @@
 import subprocess
 import time
 import cv2
+import RPi.GPIO as GPIO
 from ultralytics import YOLO
 from util import read_license_plate
 
@@ -9,6 +10,11 @@ coco_model = YOLO('yolov8n.pt')
 license_plate_detector = YOLO('models/license_plate_detector.pt')
 
 vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
+
+# GPIO setup
+IR_SENSOR_PIN = 17
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(IR_SENSOR_PIN, GPIO.IN)
 
 def process_frame(image_path):
     # Process image
@@ -75,5 +81,18 @@ def capture_image():
     print(f"Image captured: {image_filename}")
     process_frame(image_filename)
 
-# Test camera functionality
-capture_image()
+try:
+    while True:
+        while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+            print("Vehicle Detected")
+            capture_image()
+            time.sleep(1)  # Adjust delay to avoid rapid triggering
+            print("Waiting for vehicle to pass...")
+            while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                time.sleep(0.1)  # Check IR sensor state continuously until HIGH
+        print("No Vehicle Detected")
+except KeyboardInterrupt:
+    GPIO.cleanup()
+
+#run command
+#sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py

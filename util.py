@@ -67,6 +67,8 @@ def get_car(license_plate, vehicle_track_ids):
 
     x1, y1, x2, y2, score, class_id = license_plate
 
+    car_indx = -1  # Initialize car_indx before the loop
+
     foundIt = False
     for j in range(len(vehicle_track_ids)):
         xcar1, ycar1, xcar2, ycar2, car_id = vehicle_track_ids[j]
