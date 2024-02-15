@@ -2,7 +2,6 @@ from ultralytics import YOLO
 import cv2
 from util import read_license_plate
 <<<<<<< Updated upstream
-import os
 =======
 import time
 from DB_Scripts.Database_Insert import insert_vehicle
