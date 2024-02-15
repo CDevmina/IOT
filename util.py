@@ -1,4 +1,3 @@
-import string
 import easyocr
 
 # Initialize the OCR reader

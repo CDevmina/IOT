@@ -5,3 +5,4 @@ filterpy~=1.4.5
 opencv-python~=4.7.0.72
 ultralytics~=8.0.235
 easyocr~=1.7.1
+pyqt5~=5.15.4

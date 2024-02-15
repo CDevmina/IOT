@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 from util import read_license_plate
 import time
-from DB_Scripts.Database_Insert import insert_vehicle
+from DB_Scripts.Database_Vehicle import insert_vehicle
 
 # load models
 coco_model = YOLO('models/yolov8n.pt')
