@@ -1,7 +1,12 @@
 from ultralytics import YOLO
 import cv2
 from util import read_license_plate
+<<<<<<< Updated upstream
 import os
+=======
+import time
+from DB_Scripts.Database_Insert import insert_vehicle
+>>>>>>> Stashed changes
 
 # load models
 coco_model = YOLO('yolov8n.pt')
@@ -15,6 +20,7 @@ def process_image(image_path):
     cv2.imshow("Image", frame)
     cv2.waitKey(0)
 
+<<<<<<< Updated upstream
 def process_video(video_path):
     cap = cv2.VideoCapture(video_path)
     while cap.isOpened():
@@ -29,6 +35,8 @@ def process_video(video_path):
     cap.release()
     cv2.destroyAllWindows()
 
+=======
+>>>>>>> Stashed changes
 def process_frame(frame):
     detections = coco_model(frame)[0]
     for detection in detections.boxes.data.tolist():
@@ -67,10 +75,19 @@ def process_frame(frame):
                 licenseplate_score = round(score * 100, 2)
                 cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
+<<<<<<< Updated upstream
+=======
+
+                #insert vehicle into database
+                insert_vehicle(license_plate_text, vehicle_type, time.time(), 'Homagama')
+
+                return  # Add this line to stop processing after the first license plate
+>>>>>>> Stashed changes
 
 # load file
 input_file = 'testdata/3.jpg'  # change this to your input file
 
+<<<<<<< Updated upstream
 # get file extension
 _, file_extension = os.path.splitext(input_file)
 
@@ -79,3 +96,6 @@ if file_extension in ['.jpg', '.png', '.jpeg']:
     process_image(input_file)
 elif file_extension in ['.mp4', '.avi']:
     process_video(input_file)
+=======
+process_image(input_file)
+>>>>>>> Stashed changes
