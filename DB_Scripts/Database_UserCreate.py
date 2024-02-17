@@ -5,14 +5,14 @@ cursor = conn.cursor()
 
 cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            user_id TEXT PRIMARY KEY,
+            user_id INT PRIMARY KEY Not Null,
             password TEXT
         )
     ''')
 
 cursor.execute('''
         CREATE TABLE IF NOT EXISTS admins (
-            admin_id TEXT PRIMARY KEY,
+            admin_id INT PRIMARY KEY Not Null,
             password TEXT
         )
     ''')

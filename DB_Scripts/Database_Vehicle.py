@@ -46,3 +46,34 @@ def delete_vehicle(license_plate, vehicle_class, time_entered, name):
     conn.close()   # Close connection after committing
 
     print(license_plate, "Has exited.")
+
+def get_all_vehicles():
+    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT license_plate, entrance, time_entered,report_status FROM vehicles')
+    vehicles = cursor.fetchall()
+
+    conn.close()
+    return vehicles
+
+def update_vehicle_status(license_plate, status):
+    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        UPDATE vehicles SET report_status = ? WHERE license_plate = ?
+    ''', (status, license_plate))
+
+    conn.commit()
+    conn.close()
+
+def check_licenseplate_exists(license_plate):
+    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM vehicles WHERE license_plate = ?', (license_plate,))
+    vehicle = cursor.fetchone()
+
+    conn.close()
+    return vehicle is not None
