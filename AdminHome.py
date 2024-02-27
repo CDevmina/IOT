@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
-from DB_Scripts.Database_User import get_all_users
+from DB_Scripts.Database_User import get_user_view
 from DB_Scripts.Database_Vehicle import get_all_vehicles
 from AdminUserAdd import AdminUserAdd
 
@@ -12,7 +12,7 @@ class AdminHome(QWidget):
 
         self.title_label = QLabel('Admin Center')
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: blue;")
+        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold;")
 
         self.user_list = QTableWidget()
         self.user_list.setColumnCount(2)
@@ -47,7 +47,7 @@ class AdminHome(QWidget):
 
     def update_user_list(self):
         self.user_list.setRowCount(0)
-        users = get_all_users()
+        users = get_user_view()
         for user in users:
             row = self.user_list.rowCount()
             self.user_list.insertRow(row)

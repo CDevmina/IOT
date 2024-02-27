@@ -10,7 +10,7 @@ class AdminVehicleView(QWidget):
 
         self.title_label = QLabel('Vehicle View')
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: blue;")
+        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold;")
 
         self.vehicle_list = QTableWidget()
         self.vehicle_list.setColumnCount(4)

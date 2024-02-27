@@ -1,9 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from AdminHome import AdminHome
+from StartPage import StartPage
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    admin_home =AdminHome ()
-    admin_home.show()
+    StartPage = StartPage()
+    StartPage.show()
     sys.exit(app.exec_())

@@ -1,7 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
-from UserLogin import UserLogin
-from AdminLogin import AdminLogin
 from PyQt5.QtWidgets import QLabel
 
 class StartPage(QWidget):
@@ -12,7 +10,7 @@ class StartPage(QWidget):
 
         self.title_label = QLabel('Expressway Vehicle Management')
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: blue;")
+        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold;")
 
         self.user_button = QPushButton('User Login')
         self.user_button.setFixedSize(200, 50)
@@ -33,15 +31,13 @@ class StartPage(QWidget):
         self.setLayout(layout)
 
     def show_user_login(self):
-        global previous_window
-        previous_window = self
+        from UserLogin import UserLogin
         self.user_login_window = UserLogin()
         self.user_login_window.show()
         self.hide()
 
     def show_admin_login(self):
-        global previous_window
-        previous_window = self
+        from AdminLogin import AdminLogin
         self.admin_login_window = AdminLogin()
         self.admin_login_window.show()
         self.hide()

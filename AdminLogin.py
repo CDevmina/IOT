@@ -65,6 +65,7 @@ class AdminLogin(QWidget):
         password = self.password_input.text()
         if verify_admin_credentials(admin_id, password):
             print('Admin logged in successfully!')
+            self.redirect_to_adminhome()
         else:
             print('Invalid admin credentials')
 
@@ -78,4 +79,10 @@ class AdminLogin(QWidget):
         from StartPage import StartPage
         self.start_page = StartPage()
         self.start_page.show()
+        self.hide()
+
+    def redirect_to_adminhome (self):
+        from AdminHome import AdminHome
+        self.admin_home = AdminHome()
+        self.admin_home.show()
         self.hide()
