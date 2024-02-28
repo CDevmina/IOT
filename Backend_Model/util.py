@@ -1,3 +1,4 @@
+import string
 import easyocr
 
 # Initialize the OCR reader
@@ -65,6 +66,8 @@ def read_license_plate(license_plate_crop):
 def get_car(license_plate, vehicle_track_ids):
 
     x1, y1, x2, y2, score, class_id = license_plate
+
+    car_indx = -1  # Initialize car_indx before the loop
 
     foundIt = False
     for j in range(len(vehicle_track_ids)):
