@@ -44,7 +44,6 @@ def process_frame(frame):
                 # Plate not detected
                 if license_plate_text is None:
                     license_plate_text = ''
-                    license_plate_text_score = 0
 
                 # license plate text and confidence score
                 print(f"License Plate: {license_plate_text}, Confidence: {score}")
@@ -57,8 +56,11 @@ def process_frame(frame):
                 cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-                # Add vehicle to the database
-                entrance_app(license_plate_text, vehicle_type, strftime, localtime)
+                if license_plate_text != '':
+                    # Add vehicle to the database
+                    entrance_app(license_plate_text, vehicle_type, strftime, localtime)
+                    print(f"Vehicle {license_plate_text} added to the database.")
+
 
                 return frame, license_plate_text
 
