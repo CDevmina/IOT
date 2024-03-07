@@ -10,7 +10,11 @@ cursor.execute('''
         license_plate TEXT PRIMARY KEY Not Null,
         vehicle_class TEXT,
         time_entered TEXT,
+        time_exited TEXT,
         entrance TEXT,
+        exit TEXT,
+        amount int,
+        average_speed int,
         report_status TEXT
     )
 ''')
