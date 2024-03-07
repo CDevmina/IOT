@@ -16,8 +16,8 @@ def add_user(user_id, password):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO users (user_id, password)
-        VALUES (?, ?)
+        INSERT INTO users (user_id, password, status)
+        VALUES (?, ?, ?)
     ''', (user_id, password, 'Offline'))
     conn.commit()
     conn.close()

@@ -9,7 +9,8 @@ from DB_Scripts.Database_User import update_user_status
 from UserLogin import UserLogin
 
 class Ui_MainWindow(object):
-    def __init__(self, current_user_id):
+    def __init__(self, MainWindow, current_user_id):
+        self.MainWindow = MainWindow
         self.current_user_id = current_user_id
         self.model_running = False
 
@@ -162,7 +163,7 @@ class Ui_MainWindow(object):
         print('User logged out successfully!')
         self.login_page = UserLogin()
         self.login_page.show()
-        self.close()
+        self.MainWindow.hide()
 
     def start_model(self):
         if not self.model_running:
