@@ -6,6 +6,7 @@ import cv2
 import RPi.GPIO as GPIO
 from ultralytics import YOLO
 import time
+from time import strftime
 from Backend_Model.util import read_license_plate
 from DB_Scripts.Database_Vehicle import exit_app
 
