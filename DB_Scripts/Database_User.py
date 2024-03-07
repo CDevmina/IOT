@@ -18,7 +18,7 @@ def add_user(user_id, password):
     cursor.execute('''
         INSERT INTO users (user_id, password, status)
         VALUES (?, ?, ?)
-    ''', (user_id, password, 'Offline'))
+    ''', (user_id, password, 'Logged Out'))
     conn.commit()
     conn.close()
 
