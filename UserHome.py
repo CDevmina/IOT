@@ -3,13 +3,14 @@ from PyQt5.QtWidgets import QMessageBox
 
 from DB_Scripts.Database_Vehicle import select_vehicle
 from time import strftime, localtime
-from Backend_Model.exit import process_image
+from Backend_Model.exit import Run
 from PyQt5.QtGui import QPixmap, QImage
 from DB_Scripts.Database_User import update_user_status
 from UserLogin import UserLogin
 
 class Ui_MainWindow(object):
-    def __init__(self, current_user_id):
+    def __init__(self, MainWindow, current_user_id):
+        self.MainWindow = MainWindow
         self.current_user_id = current_user_id
         self.model_running = False
 
@@ -104,7 +105,7 @@ class Ui_MainWindow(object):
         self.ConfirmButton.clicked.connect(self.confirm_exit)
 
         self.ConfirmLabel = QtWidgets.QLabel(self.centralwidget)
-        self.ConfirmLabel.setGeometry(QtCore.QRect(460, 520, 121, 16))
+        self.ConfirmLabel.setGeometry(QtCore.QRect(460, 520, 200, 16))
         self.ConfirmLabel.setObjectName("ConfirmLabel")
         self.ConfirmLabel.setStyleSheet("font-size: 10px; color: gray;")  # Set the font size and color
 
@@ -162,7 +163,7 @@ class Ui_MainWindow(object):
         print('User logged out successfully!')
         self.login_page = UserLogin()
         self.login_page.show()
-        self.close()
+        self.MainWindow.hide()
 
     def start_model(self):
         if not self.model_running:
@@ -170,16 +171,17 @@ class Ui_MainWindow(object):
             self.update_model_status()
 
             # You can replace 'image_path' with the actual path to your image
-            frame, self.license_plate = process_image('testdata/3.jpg')
+            frame, self.license_plate = Run()
 
-            height, width, channel = frame.shape
-            bytesPerLine = 3 * width
-            qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
+            if frame is not None:  # Add a check to ensure frame is not None
+                height, width, channel = frame.shape
+                bytesPerLine = 3 * width
+                qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
 
-            pixmap = QPixmap.fromImage(qImg)
-            self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
+                pixmap = QPixmap.fromImage(qImg)
+                self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
-            self.update_vehicle_info(self.license_plate)
+                self.update_vehicle_info(self.license_plate)
 
     def stop_model(self):
         if self.model_running:

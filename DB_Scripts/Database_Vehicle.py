@@ -3,7 +3,7 @@ import sqlite3
 
 # Insert vehicle into database
 def insert_vehicle(license_plate, vehicle_class, time_entered, name, report_status):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # insert Vehicle
@@ -20,7 +20,7 @@ def insert_vehicle(license_plate, vehicle_class, time_entered, name, report_stat
 
 # Select vehicle from database
 def select_vehicle(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Select Vehicle and assign entrance to variable
@@ -38,7 +38,7 @@ def select_vehicle(license_plate):
 
 # Delete vehicle from database
 def delete_vehicle(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Delete vehicle from database and display deleted vehicle
@@ -55,7 +55,7 @@ def delete_vehicle(license_plate):
 
 # Get all vehicles from the database
 def get_all_vehicles():
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT license_plate, entrance, time_entered,report_status FROM vehicles')
@@ -66,7 +66,7 @@ def get_all_vehicles():
 
 
 def update_vehicle_status(license_plate, status):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -78,7 +78,7 @@ def update_vehicle_status(license_plate, status):
 
 
 def check_licenseplate_exists(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM vehicles WHERE license_plate = ?', (license_plate,))

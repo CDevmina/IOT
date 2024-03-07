@@ -1,18 +1,25 @@
-from ultralytics import YOLO
-import cv2
-from util import read_license_plate
+import sys
+sys.path.append('/home/pi/IOT')
 
-# load models
+import subprocess
+import cv2
+import RPi.GPIO as GPIO
+from ultralytics import YOLO
+import time
+from Backend_Model.util import read_license_plate
+from DB_Scripts.Database_Vehicle import exit_app
+
+# Load YOLO models
 coco_model = YOLO('models/yolov8n.pt')
 license_plate_detector = YOLO('models/license_plate_detector.pt')
 
 vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 
-def process_image(image_path):
-    frame = cv2.imread(image_path)
-    process_frame(frame)
-    cv2.imshow("Image", frame)
-    cv2.waitKey(0)
+# GPIO setup
+IR_SENSOR_PIN = 17
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(IR_SENSOR_PIN, GPIO.IN)
+
 
 def process_frame(frame):
     detections = coco_model(frame)[0]
@@ -20,7 +27,7 @@ def process_frame(frame):
         x1, y1, x2, y2, score, class_id = detection
         if int(class_id) in vehicles.keys():
 
-            #vehicle bounding box
+            # vehicle bounding box
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
             vehicle_type = vehicles.get(int(class_id), 'unknown')
             cv2.putText(frame, f"Vehicle Type: {vehicle_type}", (int(x1), int(y1) - 10),
@@ -37,12 +44,12 @@ def process_frame(frame):
                                                              cv2.THRESH_BINARY_INV)
                 license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_thresh)
 
-                #Plate not detected
+                # Plate not detected
                 if license_plate_text is None:
                     license_plate_text = ''
                     license_plate_text_score = 0
 
-                #license plate text and confidence score
+                # license plate text and confidence score
                 print(f"License Plate: {license_plate_text}, Confidence: {score}")
 
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
@@ -53,9 +60,46 @@ def process_frame(frame):
                 cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-                return  # Add this line to stop processing after the first license plate
+                # Select vehicle from database
+                entrance = exit_app(license_plate_text)
+                print(entrance)
 
-# load file
-input_file = 'testdata/3.jpg'  # change this to your input file
+                return frame, license_plate_text
+            
+    return None, None
 
-process_image(input_file)
+def capture_image():
+    timestamp = strftime("%Y%m%d%H%M%S")
+    image_filename = f"captured_image_{timestamp}.jpg"
+    subprocess.run(["libcamera-still", "-o", image_filename])
+    print(f"Image captured: {image_filename}")
+    cvframe, plate = process_frame(image_filename)
+    return cvframe, plate
+
+#only for testing
+def image_test ():
+    image_path = 'testdata/3.jpg'
+    frame = cv2.imread(image_path)
+    cvframe, plate = process_frame(frame)
+    return cvframe, plate
+
+
+def Run ():
+    try:
+        while True:
+            while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                print("Vehicle Detected")
+                cvframe, plate = image_test()
+                time.sleep(1)  # Adjust delay to avoid rapid triggering
+                print("Waiting for vehicle to pass...")
+                while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                    time.sleep(0.1)  # Check IR sensor state continuously until HIGH
+                    
+                return cvframe, plate
+            print("No Vehicle Detected")
+    except KeyboardInterrupt:
+            GPIO.cleanup()
+        
+
+#run command
+#sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py

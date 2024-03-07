@@ -6,7 +6,7 @@ reader = easyocr.Reader(['en'], gpu=False)
 
 # Mapping dictionaries for character conversion
 # For Sri Lankan license plates, we don't need any character conversion
-dict_char_to_int = {'@': '0', 'O': '0', 'D': '9', 'U': '0'}
+dict_char_to_int = {'@': '0', 'O': '0', 'D': '9'}
 
 dict_int_to_char = {'1': 'I'}
 
@@ -48,24 +48,17 @@ def read_license_plate(license_plate_crop):
 
     detections = reader.readtext(license_plate_crop)
 
-    # Initialize an empty string to store all detected text parts
-    all_text = ''
-
     for detection in detections:
         bbox, text, score = detection
 
         text = text.upper().replace(' ', '')
         print(f"Detected text: {text}")  # print the detected text
 
-        # Add the detected text to the all_text string
-        all_text += text
+        formatted_text = format_license(text)
+        print(f"Formatted text: {formatted_text}")  # print the formatted text
 
-    # Format and check the all_text string instead of individual text parts
-    formatted_text = format_license(all_text)
-    print(f"Formatted text: {formatted_text}")  # print the formatted text
-
-    if license_complies_format(formatted_text):
-        return formatted_text, score
+        if license_complies_format(formatted_text):
+            return formatted_text, score
 
     return None, None
 
@@ -73,6 +66,8 @@ def read_license_plate(license_plate_crop):
 def get_car(license_plate, vehicle_track_ids):
 
     x1, y1, x2, y2, score, class_id = license_plate
+
+    car_indx = -1  # Initialize car_indx before the loop
 
     foundIt = False
     for j in range(len(vehicle_track_ids)):
