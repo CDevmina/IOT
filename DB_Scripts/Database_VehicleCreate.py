@@ -7,15 +7,17 @@ cursor = conn.cursor()
 # Create a table to store vehicle data
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS vehicles (
-        license_plate TEXT PRIMARY KEY Not Null,
+        id INTEGER PRIMARY KEY NOT NULL ,
+        license_plate TEXT Not Null,
         vehicle_class TEXT,
         time_entered TEXT,
         time_exited TEXT,
         entrance TEXT,
         exit TEXT,
         amount int,
-        average_speed int,
-        report_status TEXT
+        average_speed TEXT,
+        report_status TEXT,
+        Status TEXT
     )
 ''')
 

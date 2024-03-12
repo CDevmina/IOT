@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
-from DB_Scripts.Database_Vehicle import select_vehicle
+from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
 from time import strftime, localtime
 from Backend_Model.exit import process_image
 from PyQt5.QtGui import QPixmap, QImage
@@ -12,6 +14,7 @@ class Ui_MainWindow(object):
     def __init__(self, MainWindow, current_user_id):
         self.MainWindow = MainWindow
         self.current_user_id = current_user_id
+        self.exit = 'Kadawatha'
         self.model_running = False
 
     def setupUi(self, MainWindow):
@@ -71,6 +74,9 @@ class Ui_MainWindow(object):
         self.ExitLabel.setObjectName("ExitLabel")
         self.ReportLabel = QtWidgets.QLabel(self.centralwidget)
         self.ReportLabel.setGeometry(QtCore.QRect(100, 290, 200, 16))
+        self.AverageSpeedLabel = QtWidgets.QLabel(self.centralwidget)
+        self.AverageSpeedLabel.setGeometry(QtCore.QRect(100, 320, 200, 16))
+        self.AverageSpeedLabel.setObjectName("AverageSpeedLabel")
         self.ReportLabel.setObjectName("ReportLabel")
         self.ModelLabel = QtWidgets.QLabel(self.centralwidget)
         self.ModelLabel.setGeometry(QtCore.QRect(40, 620, 200, 16))
@@ -96,7 +102,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.image_label = QtWidgets.QLabel(self.frame)
-        self.image_label.setGeometry(0, 0, self.frame.width(), self.frame.height())  # Set the QLabel geometry to fill the QFrame
+        self.image_label.setGeometry(0, 0, self.frame.width(), self.frame.height())
         self.image_label.setScaledContents(True)  # Set the QLabel to scale its contents
 
         self.StartButton.clicked.connect(self.start_model)
@@ -127,6 +133,7 @@ class Ui_MainWindow(object):
         self.TimeExitLabel.setText(_translate("MainWindow", "Time Exited:"))
         self.EntranceLabel.setText(_translate("MainWindow", "Entrance: "))
         self.ExitLabel.setText(_translate("MainWindow", "Exit: "))
+        self.AverageSpeedLabel.setText(_translate("MainWindow", "Average Speed:"))
         self.ReportLabel.setText(_translate("MainWindow", "Report: "))
         self.ModelLabel.setText(_translate("MainWindow", "Model Status: Offline"))
         self.TitleLabel.setText(_translate("MainWindow", "Express Way Management System"))
@@ -142,12 +149,13 @@ class Ui_MainWindow(object):
         vehicle_info = select_vehicle(license_plate)
         if vehicle_info is not None:
             self.Licenseplate.setText(f'License Plate: {license_plate}')
-            self.VehicleTypeLabel.setText(f'Vehicle Type: {vehicle_info[1]}')
-            self.TimeEnterLabel.setText(f'Time Entered: {vehicle_info[2]}')
+            self.VehicleTypeLabel.setText(f'Vehicle Type: {vehicle_info[2]}')
+            self.TimeEnterLabel.setText(f'Time Entered: {vehicle_info[3]}')
             self.TimeExitLabel.setText(f'Time Exited: {strftime("%Y-%m-%d %H:%M:%S", localtime())}')
-            self.EntranceLabel.setText(f'Entrance: {vehicle_info[3]}')
-            self.ExitLabel.setText(f'Exit: Kadawatha')
-            self.ReportLabel.setText(f'Report: {vehicle_info[4]}')
+            self.EntranceLabel.setText(f'Entrance: {vehicle_info[5]}')
+            self.AverageSpeedLabel.setText(f'Average Speed: {vehicle_info[8]}')
+            self.ExitLabel.setText(f'Exit: {vehicle_info[6]}')
+            self.ReportLabel.setText(f'Report: {vehicle_info[9]}')
 
             # Get the amount for the vehicle and update the AmountLabel
             amount = self.get_amount(license_plate)
@@ -180,6 +188,22 @@ class Ui_MainWindow(object):
             pixmap = QPixmap.fromImage(qImg)
             self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
+            # Update the exit time and exit location in the database
+            from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, update_vehicle_speed, update_exit_time
+            update_vehicle_exit(self.license_plate, self.exit)
+            update_exit_time(self.license_plate, strftime("%Y-%m-%d %H:%M:%S", localtime()))
+
+            # Calculate the average speed
+            average_speed = self.calculate_average_speed(self.license_plate)
+
+            # If the average speed is over 100km/h, update the report status to 'Overspeeding'
+            if average_speed > 100:
+                update_vehicle_report_status(self.license_plate, 'Overspeeding')
+
+            # Update the vehicle's average speed in the database
+            update_vehicle_speed(self.license_plate, average_speed)
+
+            # Display the updated information
             self.update_vehicle_info(self.license_plate)
 
     def stop_model(self):
@@ -189,8 +213,20 @@ class Ui_MainWindow(object):
             print("Model stopped successfully!")
 
     def confirm_exit(self):
-        from DB_Scripts.Database_Vehicle import delete_vehicle
-        delete_vehicle(self.license_plate)
+        from DB_Scripts.Database_Vehicle import update_vehicle_status, update_vehicle_exit, update_vehicle_amount
+
+        # Update the vehicle's exit location
+        update_vehicle_exit(self.license_plate, self.exit)
+
+        # Get the amount for the vehicle
+        amount = self.get_amount(self.license_plate)
+
+        # Update the vehicle's amount in the database
+        update_vehicle_amount(self.license_plate, amount)
+
+        # Update the vehicle's status to 'Out'
+        update_vehicle_status(self.license_plate, 'Out')
+
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setText(f"The Vehicle: {self.license_plate} has exited the Expressway")
@@ -212,3 +248,16 @@ class Ui_MainWindow(object):
 
         # Clear the frame
         self.image_label.clear()
+
+    def calculate_average_speed(self, license_plate):
+        from DB_Scripts.Database_Vehicle import select_vehicle
+        vehicle_info = select_vehicle(license_plate)
+        time_entered = datetime.strptime(vehicle_info[3], "%Y-%m-%d %H:%M:%S")
+        time_exited = datetime.now()
+        total_time = (time_exited - time_entered).total_seconds() / 3600  # Convert to hours
+
+        # Assume the length of the expressway is 100km
+        expressway_length = 100
+        average_speed = expressway_length / total_time  # Speed in km/h
+
+        return average_speed

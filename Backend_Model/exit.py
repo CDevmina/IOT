@@ -1,8 +1,7 @@
 from ultralytics import YOLO
 import cv2
 from Backend_Model.util import read_license_plate
-from time import strftime, localtime
-from DB_Scripts.Database_Vehicle import entrance_app, exit_app
+from DB_Scripts.Database_Vehicle import exit_app
 
 # load models
 coco_model = YOLO('D:\IOT\models\yolov8n.pt')
@@ -42,7 +41,6 @@ def process_frame(frame):
                 # Plate not detected
                 if license_plate_text is None:
                     license_plate_text = ''
-                    license_plate_text_score = 0
 
                 # license plate text and confidence score
                 print(f"License Plate: {license_plate_text}, Confidence: {score}")

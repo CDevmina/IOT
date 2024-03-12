@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 from Backend_Model.util import read_license_plate
 from time import strftime, localtime
-from DB_Scripts.Database_Vehicle import entrance_app, exit_app
+from DB_Scripts.Database_Vehicle import entrance_app
 
 # load models
 coco_model = YOLO('D:\IOT\models\yolov8n.pt')
@@ -59,7 +59,6 @@ def process_frame(frame):
                 if license_plate_text != '':
                     # Add vehicle to the database
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
-                    print(f"Vehicle {license_plate_text} added to the database.")
 
 
                 return frame, license_plate_text
