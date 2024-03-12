@@ -62,7 +62,6 @@ def process_frame(frame):
                 if license_plate_text != '':
                     # Add vehicle to the database
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
-                    print(f"Vehicle {license_plate_text} added to the database.")
 
 
                 return frame, license_plate_text

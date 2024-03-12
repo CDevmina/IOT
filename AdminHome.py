@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 from DB_Scripts.Database_User import get_user_view
-from DB_Scripts.Database_Vehicle import get_all_vehicles
+from DB_Scripts.Database_Vehicle import get_vehicles
 from AdminUserAdd import AdminUserAdd
+
 
 class AdminHome(QWidget):
     def __init__(self):
@@ -20,8 +21,8 @@ class AdminHome(QWidget):
         self.update_user_list()
 
         self.vehicle_list = QTableWidget()
-        self.vehicle_list.setColumnCount(2)
-        self.vehicle_list.setHorizontalHeaderLabels(["License Plate", "Entrance"])
+        self.vehicle_list.setColumnCount(6)
+        self.vehicle_list.setHorizontalHeaderLabels(["ID", "License Plate", "Entrance", "Time", "Report Status", "Status"])
         self.update_vehicle_list()
 
         self.user_add_button = QPushButton('Add User')
@@ -56,12 +57,16 @@ class AdminHome(QWidget):
 
     def update_vehicle_list(self):
         self.vehicle_list.setRowCount(0)
-        vehicles = get_all_vehicles()
+        vehicles = get_vehicles()
         for vehicle in vehicles:
             row = self.vehicle_list.rowCount()
             self.vehicle_list.insertRow(row)
             self.vehicle_list.setItem(row, 0, QTableWidgetItem(str(vehicle[0])))
             self.vehicle_list.setItem(row, 1, QTableWidgetItem(str(vehicle[1])))
+            self.vehicle_list.setItem(row, 2, QTableWidgetItem(str(vehicle[2])))
+            self.vehicle_list.setItem(row, 3, QTableWidgetItem(str(vehicle[3])))
+            self.vehicle_list.setItem(row, 4, QTableWidgetItem(str(vehicle[4])))
+            self.vehicle_list.setItem(row, 5, QTableWidgetItem(str(vehicle[5])))
 
     def go_to_user_add(self):
         self.user_add_window = AdminUserAdd()
