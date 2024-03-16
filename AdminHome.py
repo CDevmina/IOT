@@ -34,9 +34,13 @@ class AdminHome(QWidget):
         self.logout_button = QPushButton('Logout')
         self.logout_button.clicked.connect(self.logout)
 
+        self.analytics_button = QPushButton('Analytics')
+        self.analytics_button.clicked.connect(self.go_to_analytics)
+
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.user_add_button)
         button_layout.addWidget(self.vehicle_view_button)
+        button_layout.addWidget(self.analytics_button)  # add the new button here
         button_layout.addWidget(self.logout_button)
 
         main_layout = QVBoxLayout()
@@ -83,4 +87,9 @@ class AdminHome(QWidget):
         from StartPage import StartPage
         self.start_page = StartPage()
         self.start_page.show()
+        self.hide()
+
+    def go_to_analytics(self):
+        self.analytics_window = AnalyticsWindow()
+        self.analytics_window.show()
         self.hide()
