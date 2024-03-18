@@ -90,6 +90,7 @@ class AdminHome(QWidget):
         self.hide()
 
     def go_to_analytics(self):
+        from AnalyticsPage import AnalyticsWindow
         self.analytics_window = AnalyticsWindow()
         self.analytics_window.show()
         self.hide()

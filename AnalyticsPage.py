@@ -1,8 +1,7 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QComboBox, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QComboBox, QHBoxLayout, QPushButton
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from DB_Scripts.vehicle_anaylitics import totalcount_graph
+from DB_Scripts.vehicle_anaylitics import totalcount_graph, average_speed_graph, reported_vehicles_graph , busiest_entrance_exit_graph
 
 class AnalyticsWindow(QWidget):
     def __init__(self):
@@ -29,7 +28,7 @@ class AnalyticsWindow(QWidget):
         self.combo3.currentTextChanged.connect(self.update_graph)
 
         self.combo4 = QComboBox()
-        self.combo4.addItems(['Hourly', 'Daily', 'Monthly', 'Yearly'])
+        self.combo4.addItems(['Entrance', 'Exit'])
         self.combo4.currentTextChanged.connect(self.update_graph)
 
         # Create a layout for the first two combo boxes
@@ -51,6 +50,11 @@ class AnalyticsWindow(QWidget):
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.layout.addWidget(self.canvas)
 
+        # Create a back button
+        self.back_button = QPushButton('Back')
+        self.back_button.clicked.connect(self.go_back)
+        self.layout.addWidget(self.back_button)
+
         # Update the graph
         self.update_graph()
 
@@ -63,19 +67,26 @@ class AnalyticsWindow(QWidget):
         totalcount_graph(ax1, self.filter_combo.currentText())
 
         ax2 = self.figure.add_subplot(2, 2, 2)
-        # Add your code to generate the second graph here
+        average_speed_graph(ax2, self.combo2.currentText())
 
         ax3 = self.figure.add_subplot(2, 2, 3)
-        # Add your code to generate the third graph here
+        reported_vehicles_graph(ax3, self.combo3.currentText())
 
         ax4 = self.figure.add_subplot(2, 2, 4)
-        # Add your code to generate the fourth graph here
+        busiest_entrance_exit_graph(ax4, self.combo4.currentText())
+
+        # Adjust the spacing between the subplots
+        self.figure.subplots_adjust(hspace=0.5, wspace=0.3)
 
         # Draw the canvas
         self.canvas.draw()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = AnalyticsWindow()
-    window.showMaximized()  # Change this line to open the window in full screen
-    sys.exit(app.exec_())
+    def go_back(self):
+        from AdminHome import AdminHome
+
+        # Close the AnalyticsWindow
+        self.close()
+
+        # Open the AdminHome page
+        self.admin_home = AdminHome()
+        self.admin_home.show()
