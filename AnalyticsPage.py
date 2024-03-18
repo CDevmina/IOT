@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QComboBox, QHBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from DB_Scripts.vehicle_anaylitics import totalcount_graph
@@ -16,14 +16,35 @@ class AnalyticsWindow(QWidget):
 
         # Create a combo box for the filter
         self.filter_combo = QComboBox()
-        self.filter_combo.addItem('All')
-        self.filter_combo.addItem('Tuesday')
-        self.filter_combo.addItem('Wednesday')
-        self.filter_combo.addItem('Thursday')
-        self.filter_combo.addItem('Friday')
-        self.filter_combo.addItem('Saturday')
+        self.filter_combo.addItems(['Hourly', 'Daily', 'Monthly', 'Yearly'])
         self.filter_combo.currentTextChanged.connect(self.update_graph)
-        self.layout.addWidget(self.filter_combo)
+
+        # Create three more combo boxes
+        self.combo2 = QComboBox()
+        self.combo2.addItems(['Hourly', 'Daily', 'Monthly', 'Yearly'])
+        self.combo2.currentTextChanged.connect(self.update_graph)
+
+        self.combo3 = QComboBox()
+        self.combo3.addItems(['Hourly', 'Daily', 'Monthly', 'Yearly'])
+        self.combo3.currentTextChanged.connect(self.update_graph)
+
+        self.combo4 = QComboBox()
+        self.combo4.addItems(['Hourly', 'Daily', 'Monthly', 'Yearly'])
+        self.combo4.currentTextChanged.connect(self.update_graph)
+
+        # Create a layout for the first two combo boxes
+        self.layout1 = QHBoxLayout()
+        self.layout1.addWidget(self.filter_combo)
+        self.layout1.addWidget(self.combo2)
+
+        # Create a layout for the last two combo boxes
+        self.layout2 = QHBoxLayout()
+        self.layout2.addWidget(self.combo3)
+        self.layout2.addWidget(self.combo4)
+
+        # Add the layouts to the main layout
+        self.layout.addLayout(self.layout1)
+        self.layout.addLayout(self.layout2)
 
         # Create a figure and a canvas
         self.figure = Figure()

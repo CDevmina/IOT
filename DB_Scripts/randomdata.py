@@ -17,10 +17,14 @@ exits = ['Exit1', 'Exit2', 'Exit3']
 speeds = [50, 60, 70, 80, 90, 100]
 
 # Insert the vehicles into the database
-for i in range(100):
+for i in range(1000):  # Increase the range to generate more data
     license_plate, vehicle_class = random.choice(vehicles)
     license_plate += str(i)  # Make the license plate unique
-    time_entered = datetime.now() - timedelta(hours=i)  # Subtract i hours from the current time
+
+    # Modify the time_entered to distribute the data within the last 24 hours
+    seconds_in_day = 24*60*60
+    time_entered = datetime.now() - timedelta(seconds=random.randint(0, seconds_in_day))
+
     entrance = random.choice(entrances)
     insert_vehicle(license_plate, vehicle_class, time_entered.strftime('%Y-%m-%d %H:%M:%S'), entrance, 'Normal')
 
@@ -40,5 +44,5 @@ for i in range(100):
     update_vehicle_speed(license_plate, speed)
 
     # Update the vehicle exit time
-    time_exited = time_entered + timedelta(hours=1)  # Add 1 hour to the time entered
+    time_exited = time_entered + timedelta(hours=random.randint(1, 5))  # Add a random number of hours to the time entered
     update_exit_time(license_plate, time_exited.strftime('%Y-%m-%d %H:%M:%S'))
