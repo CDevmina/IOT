@@ -92,5 +92,5 @@ class AdminHome(QWidget):
     def go_to_analytics(self):
         from AnalyticsPage import AnalyticsWindow
         self.analytics_window = AnalyticsWindow()
-        self.analytics_window.show()
+        self.analytics_window.showMaximized()
         self.hide()
