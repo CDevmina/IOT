@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
 cursor = conn.cursor()
 
 cursor.execute('''

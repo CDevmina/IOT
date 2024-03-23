@@ -94,8 +94,11 @@ class AnalyticsWindow(QWidget):
         sender = self.sender()
 
         if sender is None:
-            sender = self.filter_combo1
-            target = self.filter_combo2
+            # Initialize all combo boxes
+            self.update_graph_for_combos(self.filter_combo1, self.filter_combo2)
+            self.update_graph_for_combos(self.combo2_1, self.combo2_2)
+            self.update_graph_for_combos(self.combo3_1, self.combo3_2)
+            self.update_graph_for_combos(self.combo4_1, self.combo4_2)
         else:
             if sender == self.filter_combo1:
                 target = self.filter_combo2
@@ -108,6 +111,9 @@ class AnalyticsWindow(QWidget):
             else:
                 return
 
+            self.update_graph_for_combos(sender, target)
+
+    def update_graph_for_combos(self, sender, target):
         filter1 = sender.currentText()
 
         target.clear()
@@ -126,7 +132,7 @@ class AnalyticsWindow(QWidget):
 
 
     def get_all_entrances_exits(self):
-        conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT entrance FROM vehicles UNION SELECT DISTINCT exit FROM vehicles ORDER BY entrance')
         entrances_exits = [row[0] for row in cursor.fetchall()]
@@ -135,7 +141,7 @@ class AnalyticsWindow(QWidget):
 
 
     def get_all_days(self):
-        conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m-%d", time_entered) as Day FROM vehicles ORDER BY Day')
         days = [row[0] for row in cursor.fetchall()]
@@ -143,7 +149,7 @@ class AnalyticsWindow(QWidget):
         return days
 
     def get_all_months(self):
-        conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m", time_entered) as Month FROM vehicles ORDER BY Month')
         months = [row[0] for row in cursor.fetchall()]
@@ -151,7 +157,7 @@ class AnalyticsWindow(QWidget):
         return months
 
     def get_all_years(self):
-        conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y", time_entered) as Year FROM vehicles ORDER BY Year')
         years = [row[0] for row in cursor.fetchall()]
@@ -173,7 +179,7 @@ class AnalyticsWindow(QWidget):
         reported_vehicles_graph(ax3, self.combo3_1.currentText(), self.combo3_2.currentText())
 
         ax4 = self.figure.add_subplot(2, 2, 4)
-        #busiest_entrance_exit_graph(ax4, self.combo4_1.currentText(), self.combo4_2.currentText())
+        busiest_entrance_exit_graph(ax4, self.combo4_1.currentText(), self.combo4_2.currentText())
 
         # Adjust the spacing between the subplots
         self.figure.subplots_adjust(hspace=0.5, wspace=0.3)
@@ -190,13 +196,3 @@ class AnalyticsWindow(QWidget):
         # Open the AdminHome page
         self.admin_home = AdminHome()
         self.admin_home.show()
-
-
-if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
-    import sys
-
-    app = QApplication(sys.argv)
-    window = AnalyticsWindow()
-    window.show()
-    sys.exit(app.exec_())
