@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMainWindow
 from PyQt5.QtCore import Qt
-from DB_Scripts.Database_User import verify_user_credentials
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMainWindow
+
 from DB_Scripts.Database_User import update_user_status
+from DB_Scripts.Database_User import verify_user_credentials
+
 
 class UserLogin(QWidget):
     def __init__(self):

@@ -1,6 +1,7 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QWidget, \
     QComboBox, QLineEdit
-from PyQt5.QtCore import Qt
+
 from DB_Scripts.Database_Vehicle import get_all_vehicles, get_all_vehicles_in, get_all_vehicles_out, \
     update_vehicle_report_status
 

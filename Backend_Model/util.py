@@ -1,4 +1,3 @@
-import string
 import easyocr
 
 # Initialize the OCR reader
@@ -12,7 +11,6 @@ dict_int_to_char = {'1': 'I'}
 
 
 def license_complies_format(text):
-
     if len(text) == 6 and text[:2].isalpha() and text[2:].isdigit():
         result = True
     elif len(text) == 7 and text[:3].isalpha() and text[3:].isdigit():
@@ -25,7 +23,6 @@ def license_complies_format(text):
 
 
 def format_license(text):
-
     # Strip double quotes from the text
     text = text.replace('"', '')
     text = text.replace('?', '')
@@ -44,8 +41,8 @@ def format_license(text):
 
     return text
 
-def read_license_plate(license_plate_crop):
 
+def read_license_plate(license_plate_crop):
     detections = reader.readtext(license_plate_crop)
 
     for detection in detections:
@@ -64,7 +61,6 @@ def read_license_plate(license_plate_crop):
 
 
 def get_car(license_plate, vehicle_track_ids):
-
     x1, y1, x2, y2, score, class_id = license_plate
 
     car_indx = -1  # Initialize car_indx before the loop

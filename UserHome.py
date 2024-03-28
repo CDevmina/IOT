@@ -1,13 +1,15 @@
+from datetime import datetime
+from time import strftime, localtime
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtWidgets import QMessageBox
 
-from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
-from time import strftime, localtime
 from Backend_Model.exit import Run
-from PyQt5.QtGui import QPixmap, QImage
 from DB_Scripts.Database_User import update_user_status
+from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
 from UserLogin import UserLogin
-from datetime import datetime
+
 
 class Ui_MainWindow(object):
     def __init__(self, MainWindow, current_user_id):
@@ -205,7 +207,6 @@ class Ui_MainWindow(object):
 
                 # Display the updated information
                 self.update_vehicle_info(self.license_plate)
-
 
     def stop_model(self):
         if self.model_running:

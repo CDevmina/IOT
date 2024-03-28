@@ -5,7 +5,7 @@ import sqlite3
 conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
 cursor = conn.cursor()
 
- # Delete vehicle from database and display deleted vehicle
+# Delete vehicle from database and display deleted vehicle
 
 cursor.execute('''
     Delete from vehicles WHERE license_plate = ?
