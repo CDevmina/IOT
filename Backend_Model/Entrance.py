@@ -1,11 +1,13 @@
-from ultralytics import YOLO
-import cv2
-from Backend_Model.util import read_license_plate
 from time import strftime, localtime
+
+import cv2
+from ultralytics import YOLO
+
+from Backend_Model.util import read_license_plate
 from DB_Scripts.Database_Vehicle import entrance_app
 
 # load models
-coco_model = YOLO('D:\IOT\models\yolov8n.pt')
+coco_model = YOLO('D:\Work\IOT\models\yolov8n.pt')
 license_plate_detector = YOLO('../models/license_plate_detector.pt')
 
 vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
@@ -13,10 +15,11 @@ vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 
 def process_image(image_path):
     frame = cv2.imread(image_path)
-    cvframe , plate = process_frame(frame)
+    cvframe, plate = process_frame(frame)
     cv2.imshow("Image", frame)
     cv2.waitKey(0)
     return cvframe, plate
+
 
 def process_frame(frame):
     detections = coco_model(frame)[0]
@@ -60,10 +63,10 @@ def process_frame(frame):
                     # Add vehicle to the database
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
 
-
                 return frame, license_plate_text
 
+
 # load file
-input_file = 'D:\IOT/testdata/3.jpg'  # change this to your input file
+input_file = 'D:\Work/IOT/testdata/13.jpg'  # change this to your input file
 
 process_image(input_file)

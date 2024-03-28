@@ -1,5 +1,7 @@
 import sys
+
 from PyQt5.QtWidgets import QApplication
+
 from StartPage import StartPage
 
 if __name__ == '__main__':
