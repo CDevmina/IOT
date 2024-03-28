@@ -1,15 +1,14 @@
 from datetime import datetime
-from time import strftime, localtime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtWidgets import QMessageBox
 
-from Backend_Model.exit import process_image
-from DB_Scripts.Database_User import update_user_status
 from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
+from time import strftime, localtime
+from Backend_Model.exit import process_image
+from PyQt5.QtGui import QPixmap, QImage
+from DB_Scripts.Database_User import update_user_status
 from UserLogin import UserLogin
-
 
 class Ui_MainWindow(object):
     def __init__(self, MainWindow, current_user_id):
@@ -190,8 +189,7 @@ class Ui_MainWindow(object):
             self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
             # Update the exit time and exit location in the database
-            from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, update_vehicle_speed, \
-                update_exit_time
+            from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, update_vehicle_speed, update_exit_time
             update_vehicle_exit(self.license_plate, self.exit)
             update_exit_time(self.license_plate, strftime("%Y-%m-%d %H:%M:%S", localtime()))
 

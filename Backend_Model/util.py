@@ -1,12 +1,14 @@
 import cv2
-import easyocr
 import numpy as np
+import easyocr
 
 # Initialize the OCR reader
 reader = easyocr.Reader(['en'], gpu=False)
 
 # Mapping dictionaries for character conversion
+# For Sri Lankan license plates, we don't need any character conversion
 dict_char_to_int = {'@': '0', 'O': '0', 'D': '9'}
+
 dict_int_to_char = {'1': 'I'}
 
 
@@ -14,8 +16,6 @@ def license_complies_format(text):
     if len(text) == 6 and text[:2].isalpha() and text[2:].isdigit():
         result = True
     elif len(text) == 7 and text[:3].isalpha() and text[3:].isdigit():
-        result = True
-    elif len(text) == 6 and text[:2].isdigit() and text[2:].isdigit():
         result = True
     else:
         result = False
@@ -43,29 +43,11 @@ def format_license(text):
 
     return text
 
-
 def read_license_plate(license_plate_crop):
-    # Use EasyOCR to detect text
     detections = reader.readtext(license_plate_crop, detail=0)
 
     # Sort detections by x-coordinate
     detections.sort(key=lambda bbox_text_conf: bbox_text_conf[0][0][0])
-
-    # Calculate average height of characters
-    total_height = 0
-    for text in detections:
-        # Convert the text to a binary image
-        text_img = np.array([[int(char == ' ') for char in line] for line in text], dtype=np.uint8)
-        text_img = cv2.bitwise_not(text_img)  # invert the image
-
-        # Calculate the height of the text by counting the white pixels in the vertical direction
-        height = np.sum(text_img) // 255
-        total_height += height
-
-    if len(detections) > 0:
-        average_height = total_height // len(detections)
-    else:
-        average_height = 0
 
     # Filter out the texts with smaller heights
     filtered_texts = []
@@ -77,8 +59,8 @@ def read_license_plate(license_plate_crop):
         # Calculate the height of the text by counting the white pixels in the vertical direction
         height = np.sum(text_img) // 255
 
-        # If the height is larger than a certain fraction of the average height, keep the text
-        if height > average_height / 1.5:  # Adjust the threshold according to your needs
+        # If the height is larger than a certain threshold, keep the text
+        if height > 30:  # you can adjust this threshold according to your needs
             filtered_texts.append(text)
 
     print(f"Filtered texts: {filtered_texts}")

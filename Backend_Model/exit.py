@@ -1,6 +1,5 @@
-import cv2
 from ultralytics import YOLO
-
+import cv2
 from Backend_Model.util import read_license_plate
 from DB_Scripts.Database_Vehicle import exit_app
 
@@ -13,9 +12,8 @@ vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 
 def process_image(image_path):
     frame = cv2.imread(image_path)
-    cvframe, plate = process_frame(frame)
+    cvframe , plate = process_frame(frame)
     return cvframe, plate
-
 
 def process_frame(frame):
     detections = coco_model(frame)[0]

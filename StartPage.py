@@ -1,7 +1,6 @@
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSpacerItem, QSizePolicy
-
 
 class StartPage(QWidget):
     def __init__(self):
