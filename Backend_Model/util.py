@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import easyocr
 
 # Initialize the OCR reader
@@ -11,7 +13,6 @@ dict_int_to_char = {'1': 'I'}
 
 
 def license_complies_format(text):
-
     if len(text) == 6 and text[:2].isalpha() and text[2:].isdigit():
         result = True
     elif len(text) == 7 and text[:3].isalpha() and text[3:].isdigit():
@@ -24,7 +25,6 @@ def license_complies_format(text):
 
 
 def format_license(text):
-
     # Strip double quotes from the text
     text = text.replace('"', '')
     text = text.replace('?', '')
@@ -44,38 +44,35 @@ def format_license(text):
     return text
 
 def read_license_plate(license_plate_crop):
+    detections = reader.readtext(license_plate_crop, detail=0)
 
-    detections = reader.readtext(license_plate_crop)
+    # Sort detections by x-coordinate
+    detections.sort(key=lambda bbox_text_conf: bbox_text_conf[0][0][0])
 
-    for detection in detections:
-        bbox, text, score = detection
+    # Filter out the texts with smaller heights
+    filtered_texts = []
+    for text in detections:
+        # Convert the text to a binary image
+        text_img = np.array([[int(char == ' ') for char in line] for line in text], dtype=np.uint8)
+        text_img = cv2.bitwise_not(text_img)  # invert the image
 
-        text = text.upper().replace(' ', '')
-        print(f"Detected text: {text}")  # print the detected text
+        # Calculate the height of the text by counting the white pixels in the vertical direction
+        height = np.sum(text_img) // 255
 
-        formatted_text = format_license(text)
-        print(f"Formatted text: {formatted_text}")  # print the formatted text
+        # If the height is larger than a certain threshold, keep the text
+        if height > 30:  # you can adjust this threshold according to your needs
+            filtered_texts.append(text)
 
-        if license_complies_format(formatted_text):
-            return formatted_text, score
+    print(f"Filtered texts: {filtered_texts}")
+
+    # Concatenate all filtered text parts
+    full_text = ''.join([text.upper().replace(' ', '') for text in filtered_texts])
+    print(f"Detected text: {full_text}")  # print the detected text
+
+    formatted_text = format_license(full_text)
+    print(f"Formatted text: {formatted_text}")  # print the formatted text
+
+    if license_complies_format(formatted_text):
+        return formatted_text, None
 
     return None, None
-
-
-def get_car(license_plate, vehicle_track_ids):
-
-    x1, y1, x2, y2, score, class_id = license_plate
-
-    foundIt = False
-    for j in range(len(vehicle_track_ids)):
-        xcar1, ycar1, xcar2, ycar2, car_id = vehicle_track_ids[j]
-
-        if x1 > xcar1 and y1 > ycar1 and x2 < xcar2 and y2 < ycar2:
-            car_indx = j
-            foundIt = True
-            break
-
-    if foundIt:
-        return vehicle_track_ids[car_indx]
-
-    return -1, -1, -1, -1, -1
