@@ -59,7 +59,6 @@ def get_all_users():
     conn.close()
     return users
 
-
 def get_user_view():
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
@@ -69,7 +68,6 @@ def get_user_view():
 
     conn.close()
     return users
-
 
 def delete_user(user_id):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')

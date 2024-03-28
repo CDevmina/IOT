@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('/home/pi/IOT')
 
 import subprocess
@@ -67,9 +66,8 @@ def process_frame(frame):
                 print(entrance)
 
                 return frame, license_plate_text
-
+            
     return None, None
-
 
 def capture_image():
     timestamp = strftime("%Y%m%d%H%M%S")
@@ -79,16 +77,15 @@ def capture_image():
     cvframe, plate = process_frame(image_filename)
     return cvframe, plate
 
-
-# only for testing
-def image_test():
+#only for testing
+def image_test ():
     image_path = 'testdata/3.jpg'
     frame = cv2.imread(image_path)
     cvframe, plate = process_frame(frame)
     return cvframe, plate
 
 
-def Run():
+def Run ():
     try:
         while True:
             while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
@@ -98,11 +95,12 @@ def Run():
                 print("Waiting for vehicle to pass...")
                 while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
                     time.sleep(0.1)  # Check IR sensor state continuously until HIGH
-
+                    
                 return cvframe, plate
             print("No Vehicle Detected")
     except KeyboardInterrupt:
-        GPIO.cleanup()
+            GPIO.cleanup()
+        
 
-# run command
-# sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py
+#run command
+#sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py

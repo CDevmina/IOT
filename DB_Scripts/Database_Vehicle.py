@@ -58,52 +58,41 @@ def get_all_vehicles_in():
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
 
-    cursor.execute(
-        'SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles WHERE Status = ? ',
-        ('In',))
+    cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles WHERE Status = ? ', ('In',))
     vehicles = cursor.fetchall()
 
     conn.close()
     return vehicles
-
 
 def get_all_vehicles_out():
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
 
-    cursor.execute(
-        'SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles where Status = ? ',
-        ('Out',))
+    cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles where Status = ? ', ('Out',))
     vehicles = cursor.fetchall()
 
     conn.close()
     return vehicles
-
 
 def get_all_vehicles():
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
 
-    cursor.execute(
-        'SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles')
+    cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles')
     vehicles = cursor.fetchall()
 
     conn.close()
     return vehicles
-
 
 def get_vehicles():
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
 
-    cursor.execute(
-        'SELECT id, license_plate, entrance, time_entered,report_status, Status FROM vehicles where Status = ? ',
-        ('In',))
+    cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status FROM vehicles where Status = ? ', ('In',))
     vehicles = cursor.fetchall()
 
     conn.close()
     return vehicles
-
 
 def update_vehicle_report_status(license_plate, status):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
@@ -129,6 +118,7 @@ def check_licenseplate_exists(license_plate):
 
 
 def entrance_app(license_plate_text, vehicle_type, strftime, localtime):
+
     entrance = 'Homagama'
 
     # check if vehicle exists in the DB
@@ -155,11 +145,10 @@ def update_vehicle_exit(license_plate, exit):
 
     cursor.execute('''
         UPDATE vehicles SET exit = ? WHERE license_plate = ? and Status = ?
-    ''', (exit, license_plate, 'In'))
+    ''', (exit, license_plate , 'In'))
 
     conn.commit()
     conn.close()
-
 
 def update_vehicle_amount(license_plate, amount):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
@@ -171,7 +160,6 @@ def update_vehicle_amount(license_plate, amount):
 
     conn.commit()
     conn.close()
-
 
 def update_vehicle_speed(license_plate, speed):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
@@ -187,7 +175,6 @@ def update_vehicle_speed(license_plate, speed):
     conn.commit()
     conn.close()
 
-
 def update_vehicle_status(license_plate, status):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
     cursor = conn.cursor()
@@ -198,7 +185,6 @@ def update_vehicle_status(license_plate, status):
 
     conn.commit()
     conn.close()
-
 
 def update_exit_time(license_plate, exit_time):
     conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')

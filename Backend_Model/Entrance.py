@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('/home/pi/IOT')
 
 import subprocess
@@ -21,7 +20,6 @@ vehicles = {2: 'car', 3: 'bus', 5: 'truck', 7: 'van'}
 IR_SENSOR_PIN = 17
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(IR_SENSOR_PIN, GPIO.IN)
-
 
 def process_frame(frame):
     detections = coco_model(frame)[0]
@@ -65,14 +63,14 @@ def process_frame(frame):
                     # Add vehicle to the database
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
 
-                return frame, license_plate_text
 
-            # Display processed image
+                return frame, license_plate_text
+            
+             # Display processed image
         # cv2.imshow("Image", frame)
         # cv2.waitKey(0)
 
     return None, None
-
 
 def capture_image():
     timestamp = time.strftime("%Y%m%d%H%M%S")
@@ -81,14 +79,12 @@ def capture_image():
     print(f"Image captured: {image_filename}")
     process_frame(image_filename)
 
-
-# only for testing
-def image_test():
+#only for testing
+def image_test ():
     image_path = 'testdata/3.jpg'
     frame = cv2.imread(image_path)
     cvframe, plate = process_frame(frame)
     return cvframe, plate
-
 
 try:
     while True:
@@ -103,5 +99,5 @@ try:
 except KeyboardInterrupt:
     GPIO.cleanup()
 
-# run command
-# sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py
+#run command
+#sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/main.py
