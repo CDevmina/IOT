@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushB
 from PyQt5.QtCore import Qt
 from DB_Scripts.Database_User import add_admin
 
+
+# noinspection PyUnresolvedReferences
 class AdminSignup(QWidget):
     def __init__(self):
         super().__init__()
@@ -23,6 +25,7 @@ class AdminSignup(QWidget):
 
         self.signup_button = QPushButton('Sign Up')
         self.signup_button.setStyleSheet("QPushButton { border: 1px solid gray; border-radius: 5px; font-size: 14px; }")
+        # noinspection PyUnresolvedReferences
         self.signup_button.clicked.connect(self.signup)
         self.signup_button.setFixedSize(200, 40)
 

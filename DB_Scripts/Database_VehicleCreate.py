@@ -1,13 +1,13 @@
 import sqlite3
 
 # Connect to the database (or create it if it doesn't exist)
-conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+conn = sqlite3.connect('../Database/vehicle_database.db')
 cursor = conn.cursor()
 
 # Create a table to store vehicle data
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS vehicles (
-        id INTEGER PRIMARY KEY NOT NULL ,
+        id INTEGER PRIMARY KEY NOT NULL,
         license_plate TEXT Not Null,
         vehicle_class TEXT,
         time_entered TEXT,

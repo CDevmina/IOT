@@ -3,8 +3,11 @@ import sqlite3
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QComboBox, QHBoxLayout, QPushButton, QLabel
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from DB_Scripts.vehicle_anaylitics import totalcount_graph, average_speed_graph, reported_vehicles_graph , busiest_entrance_exit_graph
+from DB_Scripts.vehicle_anaylitics import totalcount_graph, average_speed_graph, reported_vehicles_graph, \
+    busiest_entrance_exit_graph
 
+
+# noinspection PyUnresolvedReferences,PyTypeChecker
 class AnalyticsWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -50,7 +53,6 @@ class AnalyticsWindow(QWidget):
 
         self.combo4_2 = QComboBox()
         self.combo4_2.currentTextChanged.connect(self.update_graph)
-
 
         # Create a layout for the first two combo boxes
         self.layout1 = QHBoxLayout()
@@ -130,34 +132,37 @@ class AnalyticsWindow(QWidget):
             elif filter1 == 'Yearly':
                 target.addItem('N/A')
 
-
-    def get_all_entrances_exits(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    @staticmethod
+    def get_all_entrances_exits():
+        conn = sqlite3.connect('Database/vehicle_database.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT DISTINCT entrance FROM vehicles UNION SELECT DISTINCT exit FROM vehicles ORDER BY entrance')
+        cursor.execute(
+            'SELECT DISTINCT entrance FROM vehicles UNION SELECT DISTINCT exit FROM vehicles ORDER BY entrance')
         entrances_exits = [row[0] for row in cursor.fetchall()]
         conn.close()
         return entrances_exits
 
-
-    def get_all_days(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    @staticmethod
+    def get_all_days():
+        conn = sqlite3.connect('Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m-%d", time_entered) as Day FROM vehicles ORDER BY Day')
         days = [row[0] for row in cursor.fetchall()]
         conn.close()
         return days
 
-    def get_all_months(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    @staticmethod
+    def get_all_months():
+        conn = sqlite3.connect('Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m", time_entered) as Month FROM vehicles ORDER BY Month')
         months = [row[0] for row in cursor.fetchall()]
         conn.close()
         return months
 
-    def get_all_years(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    @staticmethod
+    def get_all_years():
+        conn = sqlite3.connect('Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y", time_entered) as Year FROM vehicles ORDER BY Year')
         years = [row[0] for row in cursor.fetchall()]

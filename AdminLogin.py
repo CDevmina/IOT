@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushB
 from PyQt5.QtCore import Qt
 from DB_Scripts.Database_User import verify_admin_credentials
 
+
+# noinspection PyUnresolvedReferences
 class AdminLogin(QWidget):
     def __init__(self):
         super().__init__()
@@ -81,7 +83,7 @@ class AdminLogin(QWidget):
         self.start_page.show()
         self.hide()
 
-    def redirect_to_adminhome (self):
+    def redirect_to_adminhome(self):
         from AdminHome import AdminHome
         self.admin_home = AdminHome()
         self.admin_home.show()

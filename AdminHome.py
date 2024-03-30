@@ -5,6 +5,7 @@ from DB_Scripts.Database_Vehicle import get_vehicles
 from AdminUserAdd import AdminUserAdd
 
 
+# noinspection PyUnresolvedReferences
 class AdminHome(QWidget):
     def __init__(self):
         super().__init__()
@@ -22,7 +23,8 @@ class AdminHome(QWidget):
 
         self.vehicle_list = QTableWidget()
         self.vehicle_list.setColumnCount(6)
-        self.vehicle_list.setHorizontalHeaderLabels(["ID", "License Plate", "Entrance", "Time", "Report Status", "Status"])
+        self.vehicle_list.setHorizontalHeaderLabels(
+            ["ID", "License Plate", "Entrance", "Time", "Report Status", "Status"])
         self.update_vehicle_list()
 
         self.user_add_button = QPushButton('Add User')

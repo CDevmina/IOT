@@ -5,6 +5,7 @@ from DB_Scripts.Database_Vehicle import get_all_vehicles, get_all_vehicles_in, g
     update_vehicle_report_status
 
 
+# noinspection PyUnresolvedReferences
 class AdminVehicleView(QWidget):
     def __init__(self):
         super().__init__()

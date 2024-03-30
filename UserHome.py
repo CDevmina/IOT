@@ -10,6 +10,8 @@ from PyQt5.QtGui import QPixmap, QImage
 from DB_Scripts.Database_User import update_user_status
 from UserLogin import UserLogin
 
+
+# noinspection PyUnresolvedReferences,PyAttributeOutsideInit,SpellCheckingInspection
 class Ui_MainWindow(object):
     def __init__(self, MainWindow, current_user_id):
         self.MainWindow = MainWindow
@@ -158,12 +160,13 @@ class Ui_MainWindow(object):
             self.ReportLabel.setText(f'Report: {vehicle_info[9]}')
 
             # Get the amount for the vehicle and update the AmountLabel
-            amount = self.get_amount(license_plate)
+            amount = self.get_amount()
             self.AmountLabel.setText(f'Amount: {amount}')
         else:
             print("Error: Unable to retrieve vehicle information.")
 
-    def get_amount(self, license_plate):
+    @staticmethod
+    def get_amount():
         return 100
 
     def logout_user(self):
@@ -179,32 +182,38 @@ class Ui_MainWindow(object):
             self.update_model_status()
 
             # You can replace 'image_path' with the actual path to your image
-            frame, self.license_plate = process_image('testdata/3.jpg')
+            frame, self.license_plate = process_image("testdata/3_test.jpg")
 
-            height, width, channel = frame.shape
-            bytesPerLine = 3 * width
-            qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
+            if self.license_plate is not None:
+                height, width, channel = frame.shape
+                bytesPerLine = 3 * width
+                qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
 
-            pixmap = QPixmap.fromImage(qImg)
-            self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
+                pixmap = QPixmap.fromImage(qImg)
+                self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
-            # Update the exit time and exit location in the database
-            from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, update_vehicle_speed, update_exit_time
-            update_vehicle_exit(self.license_plate, self.exit)
-            update_exit_time(self.license_plate, strftime("%Y-%m-%d %H:%M:%S", localtime()))
+                # Update the exit time and exit location in the database
+                from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, \
+                    update_vehicle_speed, \
+                    update_exit_time
 
-            # Calculate the average speed
-            average_speed = self.calculate_average_speed(self.license_plate)
+                update_vehicle_exit(self.license_plate, self.exit)
+                update_exit_time(self.license_plate, strftime("%Y-%m-%d %H:%M:%S", localtime()))
 
-            # If the average speed is over 100km/h, update the report status to 'Overspeeding'
-            if average_speed > 100:
-                update_vehicle_report_status(self.license_plate, 'Overspeeding')
+                # Calculate the average speed
+                average_speed = self.calculate_average_speed(self.license_plate)
 
-            # Update the vehicle's average speed in the database
-            update_vehicle_speed(self.license_plate, average_speed)
+                # If the average speed is over 100km/h, update the report status to 'Overspeeding'
+                if average_speed > 100:
+                    update_vehicle_report_status(self.license_plate, 'Overspeeding')
 
-            # Display the updated information
-            self.update_vehicle_info(self.license_plate)
+                # Update the vehicle's average speed in the database
+                update_vehicle_speed(self.license_plate, average_speed)
+
+                # Display the updated information
+                self.update_vehicle_info(self.license_plate)
+            else:
+                print('Something went wrong!')
 
     def stop_model(self):
         if self.model_running:
@@ -219,7 +228,7 @@ class Ui_MainWindow(object):
         update_vehicle_exit(self.license_plate, self.exit)
 
         # Get the amount for the vehicle
-        amount = self.get_amount(self.license_plate)
+        amount = self.get_amount()
 
         # Update the vehicle's amount in the database
         update_vehicle_amount(self.license_plate, amount)

@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QSpacerItem, QSiz
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel
 
+
+# noinspection PyUnresolvedReferences
 class StartPage(QWidget):
     def __init__(self):
         super().__init__()

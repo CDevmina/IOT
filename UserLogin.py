@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt
 from DB_Scripts.Database_User import verify_user_credentials
 from DB_Scripts.Database_User import update_user_status
 
+
+# noinspection PyUnresolvedReferences
 class UserLogin(QWidget):
     def __init__(self):
         super().__init__()

@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushB
 from DB_Scripts.Database_User import add_user, get_all_users, delete_user
 
 
+# noinspection PyUnresolvedReferences
 class AdminUserAdd(QWidget):
     def __init__(self):
         super().__init__()
@@ -32,6 +33,7 @@ class AdminUserAdd(QWidget):
         self.delete_user_id_input = QLineEdit()
         self.delete_user_id_input.setPlaceholderText('User ID')
         self.delete_user_button = QPushButton('Confirm Delete')
+        # noinspection PyUnresolvedReferences
         self.delete_user_button.clicked.connect(self.delete_user)
         self.delete_user_layout.addWidget(self.delete_user_id_input)
         self.delete_user_layout.addWidget(self.delete_user_button)
