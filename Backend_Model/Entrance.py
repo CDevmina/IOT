@@ -88,8 +88,10 @@ def process_frame(frame):
 
                 return frame, license_plate_text
 
+    return frame, None
+
 
 # load file
-input_file = '../testdata/3_test.jpg'  # change this to your input file
+input_file = '../testdata/17.jpg'  # change this to your input file
 
 process_image(input_file)

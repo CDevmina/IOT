@@ -88,3 +88,5 @@ def process_frame(frame):
                         print("Vehicle does not exist in the database.")
 
                 return frame, license_plate_text
+
+    return frame, None
