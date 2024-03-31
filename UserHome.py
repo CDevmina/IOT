@@ -180,7 +180,7 @@ class Ui_MainWindow(object):
             # You can replace 'image_path' with the actual path to your image
             frame, self.license_plate = Run()
 
-            if frame is not None:  # Add a check to ensure frame is not None
+            if self.license_plate is not None:
                 height, width, channel = frame.shape
                 bytesPerLine = 3 * width
                 qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
@@ -188,8 +188,11 @@ class Ui_MainWindow(object):
                 pixmap = QPixmap.fromImage(qImg)
                 self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
+                # Update the exit time and exit location in the database
                 from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, \
-                    update_vehicle_speed, update_exit_time
+                    update_vehicle_speed, \
+                    update_exit_time
+
                 update_vehicle_exit(self.license_plate, self.exit)
                 update_exit_time(self.license_plate, strftime("%Y-%m-%d %H:%M:%S", localtime()))
 
@@ -205,6 +208,8 @@ class Ui_MainWindow(object):
 
                 # Display the updated information
                 self.update_vehicle_info(self.license_plate)
+            else:
+                print('Something went wrong!')
 
 
     def stop_model(self):

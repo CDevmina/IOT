@@ -1,4 +1,7 @@
 import sys
+
+import numpy as np
+
 sys.path.append('/home/pi/IOT')
 
 import subprocess
@@ -9,6 +12,7 @@ from ultralytics import YOLO
 from time import strftime, localtime
 from Backend_Model.util import read_license_plate
 from DB_Scripts.Database_Vehicle import entrance_app
+from LicensePlateError import get_license_plate_manually
 
 # Load YOLO models
 coco_model = YOLO('models/yolov8n.pt')
@@ -39,14 +43,37 @@ def process_frame(frame):
             for license_plate in license_plates.boxes.data.tolist():
                 x1, y1, x2, y2, score, class_id = license_plate
                 license_plate_crop = frame[int(y1):int(y2), int(x1): int(x2), :]
+
+                # Convert to grayscale
                 license_plate_crop_gray = cv2.cvtColor(license_plate_crop, cv2.COLOR_BGR2GRAY)
-                _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 64, 255,
-                                                             cv2.THRESH_BINARY_INV)
-                license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_thresh)
+
+                # Resize image
+                license_plate_crop_gray = cv2.resize(license_plate_crop_gray, None, fx=1.5, fy=1.5,
+                                                     interpolation=cv2.INTER_CUBIC)
+
+                # Reduce noise
+                license_plate_crop_gray = cv2.medianBlur(license_plate_crop_gray, 3)
+
+                # Binarization
+                _, license_plate_crop_thresh = cv2.threshold(license_plate_crop_gray, 0, 255,
+                                                             cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+                # Dilation and Erosion
+                kernel = np.ones((1, 1), np.uint8)
+                license_plate_crop_thresh = cv2.dilate(license_plate_crop_thresh, kernel, iterations=1)
+                license_plate_crop_thresh = cv2.erode(license_plate_crop_thresh, kernel, iterations=1)
+
+                # Apply morphological operations
+                license_plate_crop_thresh = cv2.morphologyEx(license_plate_crop_thresh, cv2.MORPH_OPEN, kernel)
+                license_plate_crop_thresh = cv2.morphologyEx(license_plate_crop_thresh, cv2.MORPH_CLOSE, kernel)
+
+                license_plate_text = read_license_plate(license_plate_crop_thresh)
 
                 # Plate not detected
-                if license_plate_text is None:
-                    license_plate_text = ''
+                if license_plate_text == (None, None):
+                    print("License plate not detected please enter manually!!!")
+                    # Prompt the user to enter a license plate manually
+                    license_plate_text = get_license_plate_manually()
 
                 # license plate text and confidence score
                 print(f"License Plate: {license_plate_text}, Confidence: {score}")
@@ -59,10 +86,9 @@ def process_frame(frame):
                 cv2.putText(frame, f"Confidence: {licenseplate_score}%", (int(x1), int(y1) - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (36, 255, 12), 2)
 
-                if license_plate_text != '':
+                if license_plate_text is not None:
                     # Add vehicle to the database
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
-
 
                 return frame, license_plate_text
             
