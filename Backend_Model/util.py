@@ -52,29 +52,6 @@ def format_license(text):
     return text
 
 
-def display_bounding_boxes(image, detections):
-    for detection in detections:
-        bbox, text, score = detection
-        top_left = tuple(map(int, bbox[0]))
-        bottom_right = tuple(map(int, bbox[2]))
-        cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
-
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.show()
-
-
-def remove_province_code(text):
-    province_codes = ['WP', 'SP', 'EP', 'NP', 'NC', 'CP', 'NW', 'SG', 'UP']
-
-    for code in province_codes:
-        if text.startswith(code):
-            print(f"Province code: {code}")
-            text = text[len(code):]
-            break
-
-    return text
-
-
 def remove_province_code_by_crop(license_plate_crop):
     # Define the width of the crop
     crop_width = int(license_plate_crop.shape[1] * 0.17)
@@ -97,14 +74,11 @@ def read_license_plate(license_plate_crop):
         slope_ths=0.0,  # Disable merging based on slope
         ycenter_ths=0.0,  # Disable merging based on y-center shift
         height_ths=0.1,  # Allow merging only if text heights are very similar
-        width_ths=0.1,  # Allow merging only if texts are close enough
+        width_ths=0.1,  # Allow merging only if text widths are very similar
         link_threshold=0.7,
         low_text=0.5,
         text_threshold=0.92,
     )
-
-    # Display the bounding boxes
-    display_bounding_boxes(license_plate_crop, detections)
 
     # Sort detections based on the x-coordinate of the bounding box
     sorted_detections = sorted(detections, key=lambda detection: detection[0][0][0])
@@ -136,4 +110,3 @@ def read_license_plate(license_plate_crop):
         return formatted_text
 
     return None, None
-

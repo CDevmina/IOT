@@ -7,3 +7,6 @@ if __name__ == '__main__':
     StartPage = StartPage()
     StartPage.show()
     sys.exit(app.exec_())
+
+#run this with:
+#sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/Start.py

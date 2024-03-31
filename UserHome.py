@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
@@ -157,12 +157,12 @@ class Ui_MainWindow(object):
             self.ReportLabel.setText(f'Report: {vehicle_info[9]}')
 
             # Get the amount for the vehicle and update the AmountLabel
-            amount = self.get_amount(license_plate)
+            amount = self.get_amount()
             self.AmountLabel.setText(f'Amount: {amount}')
         else:
             print("Error: Unable to retrieve vehicle information.")
 
-    def get_amount(self, license_plate):
+    def get_amount(self):
         return 100
 
     def logout_user(self):
@@ -181,7 +181,7 @@ class Ui_MainWindow(object):
             frame, self.license_plate = Run()
 
             if self.license_plate is not None:
-                height, width, channel = frame.shape
+                height, width= frame.shape
                 bytesPerLine = 3 * width
                 qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
 
@@ -189,7 +189,7 @@ class Ui_MainWindow(object):
                 self.image_label.setPixmap(pixmap)  # Set the QPixmap to the QLabel
 
                 # Update the exit time and exit location in the database
-                from DB_Scripts.Database_Vehicle import update_vehicle_exit, update_vehicle_status, \
+                from DB_Scripts.Database_Vehicle import update_vehicle_exit,\
                     update_vehicle_speed, \
                     update_exit_time
 
@@ -211,7 +211,6 @@ class Ui_MainWindow(object):
             else:
                 print('Something went wrong!')
 
-
     def stop_model(self):
         if self.model_running:
             self.model_running = False
@@ -225,7 +224,7 @@ class Ui_MainWindow(object):
         update_vehicle_exit(self.license_plate, self.exit)
 
         # Get the amount for the vehicle
-        amount = self.get_amount(self.license_plate)
+        amount = self.get_amount()
 
         # Update the vehicle's amount in the database
         update_vehicle_amount(self.license_plate, amount)
