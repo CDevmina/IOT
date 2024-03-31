@@ -91,12 +91,12 @@ def process_frame(frame):
                     entrance_app(license_plate_text, vehicle_type, strftime, localtime)
 
                 return frame, license_plate_text
-            
-             # Display processed image
+
+        # Display processed image
         cv2.imshow("Image", frame)
         cv2.waitKey(0)
 
-    return None, None
+    return frame, None
 
 def capture_image():
     timestamp = time.strftime("%Y%m%d%H%M%S")

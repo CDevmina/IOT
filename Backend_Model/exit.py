@@ -97,6 +97,8 @@ def process_frame(frame):
 
                 return frame, license_plate_text
 
+    return frame, None
+
 def capture_image():
     timestamp = time.strftime("%Y%m%d%H%M%S")
     image_filename = f"captured_image_{timestamp}.jpg"
