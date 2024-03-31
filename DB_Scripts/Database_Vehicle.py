@@ -3,7 +3,7 @@ import sqlite3
 
 # Insert vehicle into database
 def insert_vehicle(license_plate, vehicle_class, time_entered, name, report_status):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # insert Vehicle
@@ -20,7 +20,7 @@ def insert_vehicle(license_plate, vehicle_class, time_entered, name, report_stat
 
 # Select vehicle from database
 def select_vehicle(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Select Vehicle and assign entrance to variable
@@ -38,7 +38,7 @@ def select_vehicle(license_plate):
 
 # Delete vehicle from database
 def delete_vehicle(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Delete vehicle from database and display deleted vehicle
@@ -55,7 +55,7 @@ def delete_vehicle(license_plate):
 
 # Get all vehicles from the database
 def get_all_vehicles_in():
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles WHERE Status = ? ', ('In',))
@@ -65,7 +65,7 @@ def get_all_vehicles_in():
     return vehicles
 
 def get_all_vehicles_out():
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles where Status = ? ', ('Out',))
@@ -75,7 +75,7 @@ def get_all_vehicles_out():
     return vehicles
 
 def get_all_vehicles():
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status,average_speed, exit, time_exited, amount FROM vehicles')
@@ -85,7 +85,7 @@ def get_all_vehicles():
     return vehicles
 
 def get_vehicles():
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT id, license_plate, entrance, time_entered,report_status, Status FROM vehicles where Status = ? ', ('In',))
@@ -95,7 +95,7 @@ def get_vehicles():
     return vehicles
 
 def update_vehicle_report_status(license_plate, status):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -107,7 +107,7 @@ def update_vehicle_report_status(license_plate, status):
 
 
 def check_licenseplate_exists(license_plate):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM vehicles WHERE license_plate = ? and Status = ? ', (license_plate, 'In'))
@@ -140,7 +140,7 @@ def exit_app(license_plate_text):
 
 
 def update_vehicle_exit(license_plate, exit):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -151,7 +151,7 @@ def update_vehicle_exit(license_plate, exit):
     conn.close()
 
 def update_vehicle_amount(license_plate, amount):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -162,7 +162,7 @@ def update_vehicle_amount(license_plate, amount):
     conn.close()
 
 def update_vehicle_speed(license_plate, speed):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Format speed to two decimal places, convert to string and append "Km/h"
@@ -176,7 +176,7 @@ def update_vehicle_speed(license_plate, speed):
     conn.close()
 
 def update_vehicle_status(license_plate, status):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -187,7 +187,7 @@ def update_vehicle_status(license_plate, status):
     conn.close()
 
 def update_exit_time(license_plate, exit_time):
-    conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     cursor.execute('''

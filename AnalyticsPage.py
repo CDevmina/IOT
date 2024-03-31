@@ -132,7 +132,7 @@ class AnalyticsWindow(QWidget):
 
 
     def get_all_entrances_exits(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT entrance FROM vehicles UNION SELECT DISTINCT exit FROM vehicles ORDER BY entrance')
         entrances_exits = [row[0] for row in cursor.fetchall()]
@@ -141,7 +141,7 @@ class AnalyticsWindow(QWidget):
 
 
     def get_all_days(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m-%d", time_entered) as Day FROM vehicles ORDER BY Day')
         days = [row[0] for row in cursor.fetchall()]
@@ -149,7 +149,7 @@ class AnalyticsWindow(QWidget):
         return days
 
     def get_all_months(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m", time_entered) as Month FROM vehicles ORDER BY Month')
         months = [row[0] for row in cursor.fetchall()]
@@ -157,7 +157,7 @@ class AnalyticsWindow(QWidget):
         return months
 
     def get_all_years(self):
-        conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+        conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y", time_entered) as Year FROM vehicles ORDER BY Year')
         years = [row[0] for row in cursor.fetchall()]

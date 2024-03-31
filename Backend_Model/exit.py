@@ -99,12 +99,15 @@ def process_frame(frame):
                 return frame, license_plate_text
 
 def capture_image():
-    timestamp = strftime("%Y%m%d%H%M%S")
+    timestamp = time.strftime("%Y%m%d%H%M%S")
     image_filename = f"captured_image_{timestamp}.jpg"
     subprocess.run(["libcamera-still", "-o", image_filename])
     print(f"Image captured: {image_filename}")
-    cvframe, plate = process_frame(image_filename)
-    return cvframe, plate
+    image = cv2.imread(image_filename)  # Read the image file into a numpy array
+    if image is not None:
+        process_frame(image)
+    else:
+        print(f"Failed to load image: {image_filename}")
 
 #only for testing
 def image_test ():

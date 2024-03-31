@@ -3,7 +3,7 @@ import sqlite3
 
 def totalcount_graph(ax, filter1, filter2):
     # Query database
-    conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Define a color for each vehicle class
@@ -51,7 +51,7 @@ def totalcount_graph(ax, filter1, filter2):
 
 def average_speed_graph(ax, filter1, filter2):
     # Query database
-    conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     if filter1 == 'Hourly':
@@ -90,7 +90,7 @@ def average_speed_graph(ax, filter1, filter2):
     return data
 def reported_vehicles_graph(ax, filter1, filter2):
     # Connect to the SQLite database
-    conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Execute a SQL query to fetch the count of reported vehicles
@@ -136,7 +136,7 @@ def reported_vehicles_graph(ax, filter1, filter2):
 
 def busiest_entrance_exit_graph(ax, entrance_or_exit, date):
     # Connect to the SQLite database
-    conn = sqlite3.connect('D:\Work\IOT\Database/vehicle_database.db')
+    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
     cursor = conn.cursor()
 
     # Execute a SQL query to fetch the count of vehicles by entrance or exit for each hour of the specified date

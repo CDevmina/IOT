@@ -1,7 +1,7 @@
 import sqlite3
 
 # Connect to the database (or create it if it doesn't exist)
-conn = sqlite3.connect('D:\IOT\Database/vehicle_database.db')
+conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
 cursor = conn.cursor()
 
 # Create a table to store vehicle data
