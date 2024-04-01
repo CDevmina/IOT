@@ -90,8 +90,8 @@ def process_frame(frame):
                 return frame, license_plate_text
 
         # Display processed image
-        # cv2.imshow("Image", frame)
-        # cv2.waitKey(0)
+        cv2.imshow("Image", frame)
+        cv2.waitKey(0)
 
     return frame, None
 
@@ -113,21 +113,18 @@ def image_test ():
     cvframe, plate = process_frame(frame)
     return cvframe, plate
 
-image_test()
-
-
-# try:
-#     while True:
-#         while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
-#             print("Vehicle Detected")
-#             capture_image()
-#             time.sleep(1)  # Adjust delay to avoid rapid triggering
-#             print("Waiting for vehicle to pass...")
-#             while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
-#                 time.sleep(0.1)  # Check IR sensor state continuously until HIGH
-#         print("No Vehicle Detected")
-# except KeyboardInterrupt:
-#     GPIO.cleanup()
+try:
+    while True:
+        while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+            print("Vehicle Detected")
+            capture_image()
+            time.sleep(1)  # Adjust delay to avoid rapid triggering
+            print("Waiting for vehicle to pass...")
+            while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                time.sleep(0.1)  # Check IR sensor state continuously until HIGH
+        print("No Vehicle Detected")
+except KeyboardInterrupt:
+    GPIO.cleanup()
 
 #run command
 #sudo /home/pi/IOT/.venv/bin/python /home/pi/IOT/Backend_Model/Entrance.py

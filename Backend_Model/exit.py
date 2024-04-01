@@ -113,23 +113,22 @@ def image_test ():
     cvframe, plate = process_frame(frame)
     return cvframe, plate
 
-image_test()
 
-# def Run ():
-#     try:
-#         while True:
-#             while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
-#                 print("Vehicle Detected")
-#                 cvframe, plate = image_test()
-#                 time.sleep(1)  # Adjust delay to avoid rapid triggering
-#                 print("Waiting for vehicle to pass...")
-#                 while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
-#                     time.sleep(0.1)  # Check IR sensor state continuously until HIGH
+def Run ():
+    try:
+        while True:
+            while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                print("Vehicle Detected")
+                cvframe, plate = capture_image()
+                time.sleep(1)  # Adjust delay to avoid rapid triggering
+                print("Waiting for vehicle to pass...")
+                while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
+                    time.sleep(0.1)  # Check IR sensor state continuously until HIGH
                     
-#                 return cvframe, plate
-#             print("No Vehicle Detected")
-#     except KeyboardInterrupt:
-#             GPIO.cleanup()
+                return cvframe, plate
+            print("No Vehicle Detected")
+    except KeyboardInterrupt:
+            GPIO.cleanup()
         
 
 #run command

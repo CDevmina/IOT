@@ -181,7 +181,7 @@ class Ui_MainWindow(object):
             frame, self.license_plate = Run()
 
             if self.license_plate is not None:
-                height, width= frame.shape
+                height, width, _ = frame.shape
                 bytesPerLine = 3 * width
                 qImg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
 
@@ -267,3 +267,4 @@ class Ui_MainWindow(object):
         average_speed = expressway_length / total_time  # Speed in km/h
 
         return average_speed
+
