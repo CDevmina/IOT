@@ -102,7 +102,9 @@ def capture_image():
     print(f"Image captured: {image_filename}")
     image = cv2.imread(image_filename)  # Read the image file into a numpy array
     if image is not None:
-        process_frame(image)
+        cvframe, license_plate = process_frame(image)
+        return cvframe, license_plate
+        
     else:
         print(f"Failed to load image: {image_filename}")
 
@@ -119,7 +121,7 @@ def Run ():
         while True:
             while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:
                 print("Vehicle Detected")
-                cvframe, plate = capture_image()
+                cvframe, plate = capture_image ()
                 time.sleep(1)  # Adjust delay to avoid rapid triggering
                 print("Waiting for vehicle to pass...")
                 while GPIO.input(IR_SENSOR_PIN) == GPIO.LOW:

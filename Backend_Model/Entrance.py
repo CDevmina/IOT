@@ -90,8 +90,8 @@ def process_frame(frame):
                 return frame, license_plate_text
 
         # Display processed image
-        cv2.imshow("Image", frame)
-        cv2.waitKey(0)
+        # cv2.imshow("Image", frame)
+        # cv2.waitKey(0)
 
     return frame, None
 
