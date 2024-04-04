@@ -1,8 +1,6 @@
 from datetime import datetime
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-
 from DB_Scripts.Database_Vehicle import select_vehicle, update_vehicle_report_status
 from time import strftime, localtime
 from Backend_Model.exit import process_image
@@ -10,8 +8,8 @@ from PyQt5.QtGui import QPixmap, QImage
 from DB_Scripts.Database_User import update_user_status
 from UserLogin import UserLogin
 
+test_img = "testdata/3_test.jpg"
 
-# noinspection PyUnresolvedReferences,PyAttributeOutsideInit,SpellCheckingInspection
 class Ui_MainWindow(object):
     def __init__(self, MainWindow, current_user_id):
         self.MainWindow = MainWindow
@@ -182,7 +180,7 @@ class Ui_MainWindow(object):
             self.update_model_status()
 
             # You can replace 'image_path' with the actual path to your image
-            frame, self.license_plate = process_image("testdata/3_test.jpg")
+            frame, self.license_plate = process_image(test_img)
 
             if self.license_plate is not None:
                 height, width, channel = frame.shape

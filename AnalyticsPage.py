@@ -6,6 +6,7 @@ from matplotlib.figure import Figure
 from DB_Scripts.vehicle_anaylitics import totalcount_graph, average_speed_graph, reported_vehicles_graph, \
     busiest_entrance_exit_graph
 
+con_str = 'D:/IOT/Database/vehicle_database.db'
 
 # noinspection PyUnresolvedReferences,PyTypeChecker
 class AnalyticsWindow(QWidget):
@@ -95,25 +96,24 @@ class AnalyticsWindow(QWidget):
     def update_filter_options(self):
         sender = self.sender()
 
-        if sender is None:
-            # Initialize all combo boxes
-            self.update_graph_for_combos(self.filter_combo1, self.filter_combo2)
-            self.update_graph_for_combos(self.combo2_1, self.combo2_2)
-            self.update_graph_for_combos(self.combo3_1, self.combo3_2)
-            self.update_graph_for_combos(self.combo4_1, self.combo4_2)
-        else:
-            if sender == self.filter_combo1:
-                target = self.filter_combo2
-            elif sender == self.combo2_1:
-                target = self.combo2_2
-            elif sender == self.combo3_1:
-                target = self.combo3_2
-            elif sender == self.combo4_1:
-                target = self.combo4_2
-            else:
-                return
+        # Initialize all combo boxes
+        self.update_graph_for_combos(self.filter_combo1, self.filter_combo2)
+        self.update_graph_for_combos(self.combo2_1, self.combo2_2)
+        self.update_graph_for_combos(self.combo3_1, self.combo3_2)
+        self.update_graph_for_combos(self.combo4_1, self.combo4_2)
 
-            self.update_graph_for_combos(sender, target)
+        if sender == self.filter_combo1:
+            target = self.filter_combo2
+        elif sender == self.combo2_1:
+            target = self.combo2_2
+        elif sender == self.combo3_1:
+            target = self.combo3_2
+        elif sender == self.combo4_1:
+            target = self.combo4_2
+        else:
+            return
+
+        self.update_graph_for_combos(sender, target)
 
     def update_graph_for_combos(self, sender, target):
         filter1 = sender.currentText()
@@ -134,7 +134,7 @@ class AnalyticsWindow(QWidget):
 
     @staticmethod
     def get_all_entrances_exits():
-        conn = sqlite3.connect('Database/vehicle_database.db')
+        conn = sqlite3.connect(con_str)
         cursor = conn.cursor()
         cursor.execute(
             'SELECT DISTINCT entrance FROM vehicles UNION SELECT DISTINCT exit FROM vehicles ORDER BY entrance')
@@ -144,7 +144,7 @@ class AnalyticsWindow(QWidget):
 
     @staticmethod
     def get_all_days():
-        conn = sqlite3.connect('Database/vehicle_database.db')
+        conn = sqlite3.connect(con_str)
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m-%d", time_entered) as Day FROM vehicles ORDER BY Day')
         days = [row[0] for row in cursor.fetchall()]
@@ -153,7 +153,7 @@ class AnalyticsWindow(QWidget):
 
     @staticmethod
     def get_all_months():
-        conn = sqlite3.connect('Database/vehicle_database.db')
+        conn = sqlite3.connect(con_str)
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y-%m", time_entered) as Month FROM vehicles ORDER BY Month')
         months = [row[0] for row in cursor.fetchall()]
@@ -162,7 +162,7 @@ class AnalyticsWindow(QWidget):
 
     @staticmethod
     def get_all_years():
-        conn = sqlite3.connect('Database/vehicle_database.db')
+        conn = sqlite3.connect(con_str)
         cursor = conn.cursor()
         cursor.execute('SELECT DISTINCT strftime("%Y", time_entered) as Year FROM vehicles ORDER BY Year')
         years = [row[0] for row in cursor.fetchall()]
