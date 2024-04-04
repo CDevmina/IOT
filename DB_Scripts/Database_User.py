@@ -1,8 +1,9 @@
 import sqlite3
 
+con_str = '/home/pi/IOT/Database/vehicle_database.db'
 
 def add_admin(admin_id, password):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO admins (admin_id, password)
@@ -13,7 +14,7 @@ def add_admin(admin_id, password):
 
 
 def add_user(user_id, password):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO users (user_id, password, status)
@@ -24,7 +25,7 @@ def add_user(user_id, password):
 
 
 def verify_admin_credentials(admin_id, password):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -37,7 +38,7 @@ def verify_admin_credentials(admin_id, password):
 
 
 def verify_user_credentials(user_id, password):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -50,7 +51,7 @@ def verify_user_credentials(user_id, password):
 
 
 def get_all_users():
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('SELECT user_id, password FROM users')  # Select both the user_id and password columns
@@ -59,8 +60,9 @@ def get_all_users():
     conn.close()
     return users
 
+
 def get_user_view():
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('SELECT user_id, status FROM users')  # Select both the user_id and password columns
@@ -69,8 +71,9 @@ def get_user_view():
     conn.close()
     return users
 
+
 def delete_user(user_id):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('DELETE FROM users WHERE user_id = ?', (user_id,))
@@ -79,7 +82,7 @@ def delete_user(user_id):
 
 
 def get_user_status():
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('SELECT user_id, status FROM users')
@@ -90,7 +93,7 @@ def get_user_status():
 
 
 def update_user_status(user_id, status):
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     cursor.execute('''

@@ -1,22 +1,27 @@
 import sqlite3
 
+con_str = '/home/pi/IOT/Database/vehicle_database.db'
 
 def totalcount_graph(ax, filter1, filter2):
     # Query database
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
-    # Define a color for each vehicle class
-    vehicle_colors = {'Car': 'blue', 'Truck': 'green', 'Motorcycle': 'red'}
-
     if filter1 == 'Hourly':
-        cursor.execute('SELECT strftime("%H:00", time_entered) as Hour, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered), vehicle_class', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%H:00", time_entered) as Hour, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered), vehicle_class',
+            (filter2,))
     elif filter1 == 'Daily':
-        cursor.execute('SELECT strftime("%m-%d", time_entered) as Day, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%d", time_entered), vehicle_class', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%m-%d", time_entered) as Day, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%d", time_entered), vehicle_class',
+            (filter2,))
     elif filter1 == 'Monthly':
-        cursor.execute('SELECT strftime("%Y-%m", time_entered) as Month, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered), vehicle_class', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y-%m", time_entered) as Month, vehicle_class, COUNT(*) as Count FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered), vehicle_class',
+            (filter2,))
     elif filter1 == 'Yearly':
-        cursor.execute('SELECT strftime("%Y", time_entered) as Year, vehicle_class, COUNT(*) as Count FROM vehicles GROUP BY strftime("%Y", time_entered), vehicle_class')
+        cursor.execute(
+            'SELECT strftime("%Y", time_entered) as Year, vehicle_class, COUNT(*) as Count FROM vehicles GROUP BY strftime("%Y", time_entered), vehicle_class')
     else:
         raise ValueError(f"Invalid filter value: {filter1}")
 
@@ -49,19 +54,28 @@ def totalcount_graph(ax, filter1, filter2):
 
     return data
 
+
 def average_speed_graph(ax, filter1, filter2):
     # Query database
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     if filter1 == 'Hourly':
-        cursor.execute('SELECT strftime("%H:00", time_entered) as Hour, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered)', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%H:00", time_entered) as Hour, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered)',
+            (filter2,))
     elif filter1 == 'Daily':
-        cursor.execute('SELECT strftime("%Y-%m-%d", time_entered) as Day, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%Y-%m-%d", time_entered)', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y-%m-%d", time_entered) as Day, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%Y-%m-%d", time_entered)',
+            (filter2,))
     elif filter1 == 'Monthly':
-        cursor.execute('SELECT strftime("%Y-%m", time_entered) as Month, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered)', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y-%m", time_entered) as Month, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered)',
+            (filter2,))
     elif filter1 == 'Yearly':
-        cursor.execute('SELECT strftime("%Y", time_entered) as Year, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y", time_entered)', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y", time_entered) as Year, AVG(average_speed) as AverageSpeed FROM vehicles WHERE strftime("%Y", time_entered) = ? GROUP BY strftime("%Y", time_entered)',
+            (filter2,))
     else:
         raise ValueError(f"Invalid filter value: {filter1}")
 
@@ -88,20 +102,30 @@ def average_speed_graph(ax, filter1, filter2):
     ax.set_xticklabels(x, rotation=90, fontsize=6)
 
     return data
+
+
 def reported_vehicles_graph(ax, filter1, filter2):
     # Connect to the SQLite database
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     # Execute a SQL query to fetch the count of reported vehicles
     if filter1 == 'Hourly':
-        cursor.execute('SELECT strftime("%H:00", time_entered) as Hour, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered), report_status', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%H:00", time_entered) as Hour, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered), report_status',
+            (filter2,))
     elif filter1 == 'Daily':
-        cursor.execute('SELECT strftime("%Y-%m-%d", time_entered) as Day, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%Y-%m-%d", time_entered), report_status', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y-%m-%d", time_entered) as Day, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y-%m", time_entered) = ? GROUP BY strftime("%Y-%m-%d", time_entered), report_status',
+            (filter2,))
     elif filter1 == 'Monthly':
-        cursor.execute('SELECT strftime("%Y-%m", time_entered) as Month, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered), report_status', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y-%m", time_entered) as Month, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y", time_entered) = ? GROUP BY strftime("%Y-%m", time_entered), report_status',
+            (filter2,))
     elif filter1 == 'Yearly':
-        cursor.execute('SELECT strftime("%Y", time_entered) as Year, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y", time_entered) = ? GROUP BY strftime("%Y", time_entered), report_status', (filter2,))
+        cursor.execute(
+            'SELECT strftime("%Y", time_entered) as Year, report_status, COUNT(*) as Count FROM vehicles WHERE report_status != "Normal" AND strftime("%Y", time_entered) = ? GROUP BY strftime("%Y", time_entered), report_status',
+            (filter2,))
     else:
         raise ValueError(f"Invalid filter value: {filter1}")
 
@@ -134,13 +158,16 @@ def reported_vehicles_graph(ax, filter1, filter2):
 
     return data
 
+
 def busiest_entrance_exit_graph(ax, entrance_or_exit, date):
     # Connect to the SQLite database
-    conn = sqlite3.connect('/home/pi/IOT/Database/vehicle_database.db')
+    conn = sqlite3.connect(con_str)
     cursor = conn.cursor()
 
     # Execute a SQL query to fetch the count of vehicles by entrance or exit for each hour of the specified date
-    cursor.execute('SELECT strftime("%H:00", time_entered) as Hour, COUNT(*) as Count FROM vehicles WHERE (entrance = ? OR exit = ?) AND strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered)', (entrance_or_exit, entrance_or_exit, date))
+    cursor.execute(
+        'SELECT strftime("%H:00", time_entered) as Hour, COUNT(*) as Count FROM vehicles WHERE (entrance = ? OR exit = ?) AND strftime("%Y-%m-%d", time_entered) = ? GROUP BY strftime("%H", time_entered)',
+        (entrance_or_exit, entrance_or_exit, date))
 
     data = cursor.fetchall()
     conn.close()
